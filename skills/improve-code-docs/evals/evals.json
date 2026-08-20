@@ -1,0 +1,61 @@
+{
+  "skill_name": "improve-code-docs",
+  "evals": [
+    {
+      "id": 0,
+      "name": "add-jsdoc-to-undocumented-utils",
+      "prompt": "Can you add proper JSDoc to the functions in dateUtils.ts? None of them are documented.",
+      "expected_output": "Every exported function gets a JSDoc block with a verb-led summary, @param for each parameter and @returns for the return value. Descriptions are terse and do NOT include {type} annotations (it's TypeScript). No code/behaviour changes. Surrounding formatting (no semicolons, single quotes) preserved.",
+      "files": ["fixtures/dateUtils.ts"]
+    },
+    {
+      "id": 1,
+      "name": "trim-noisy-comments",
+      "prompt": "This rateLimiter.ts file has way too many useless comments. Clean them up and make the whole thing less verbose.",
+      "expected_output": "Redundant comments that restate the code (e.g. '// set the max tokens', '// increment the token count', '// the constructor') are deleted. The genuine 'why' comment explaining the Math.min cap is kept (possibly shortened). The class and public methods gain a CRISP one-line summary — but NOT full @param/@returns tag blocks (this is a declutter pass, not a documenting pass; adding tags just trades one kind of verbosity for another). Net result is shorter and cleaner. No behaviour change.",
+      "files": ["fixtures/rateLimiter.ts"]
+    },
+    {
+      "id": 2,
+      "name": "document-vue-script",
+      "prompt": "Do a documentation pass on the script in this SearchInput.vue component.",
+      "expected_output": "Functions (onInput, clear), the debounced runSearch, the computed and the watch get terse JSDoc/explanatory comments where useful. Noise comments inside functions ('// get the value from the input') are removed. The obvious per-prop noise comments are trimmed; defineProps/defineEmits are otherwise left alone. Template and styling are untouched.",
+      "files": ["fixtures/SearchInput.vue"]
+    },
+    {
+      "id": 3,
+      "name": "leave-well-documented-alone",
+      "prompt": "Give money.ts a documentation pass — make sure the functions are properly documented.",
+      "expected_output": "The file is already well-documented with terse JSDoc, full tags, no redundant types, and genuine 'why' comments. The skill should recognise this and make minimal-to-no changes — NOT rewrite, expand, or churn the existing good docs. Ideally it reports the file already meets the bar. Any edits should be tiny and justified (e.g. a genuinely missing tag), not stylistic churn.",
+      "files": ["fixtures/money.ts"]
+    },
+    {
+      "id": 4,
+      "name": "keep-business-rule-comments",
+      "prompt": "billing.ts is too verbose — trim the noisy comments.",
+      "expected_output": "Pure restatement comments ('// multiply the subtotal by the rate', '// add the tax...', '// start with the default', '// set days to 3 for the US') are deleted. The two comments that LOOK like restatement but actually encode external rules — the tax-authority round-half-up rationale and the AU/NPP next-business-day rule — are PRESERVED (the whole point: don't delete a 'why' just because it sits next to the line it explains). Functions gain a crisp one-line summary, NOT full @param/@returns tag blocks (declutter pass, not documenting pass). No logic change.",
+      "files": ["fixtures/billing.ts"]
+    },
+    {
+      "id": 5,
+      "name": "js-file-needs-types-in-jsdoc",
+      "prompt": "Add JSDoc to the functions in stringUtils.js.",
+      "expected_output": "This is a plain .js file with no TypeScript types, so the JSDoc @param/@returns tags SHOULD include {type} annotations (e.g. @param {string} str, @returns {string}) — that's the only place the types are captured. All three functions documented with terse verb-led summaries. The optional `suffix` param noted as optional with its default.",
+      "files": ["fixtures/stringUtils.js"]
+    },
+    {
+      "id": 6,
+      "name": "scope-to-mentioned-functions",
+      "prompt": "I just added parseConfig and validateConfig to configLoader.ts — can you make sure they're documented?",
+      "expected_output": "Only parseConfig and validateConfig get JSDoc (those are what the change introduced). The four pre-existing undocumented functions (readFile, mergeDefaults, deepClone, normalizeKeys) are LEFT ALONE — not swept into the doc pass — ideally with a one-line offer to document the rest if wanted. No logic change.",
+      "files": ["fixtures/configLoader.ts"]
+    },
+    {
+      "id": 7,
+      "name": "capture-throws-and-units",
+      "prompt": "Document the withRetry function in retry.ts.",
+      "expected_output": "JSDoc whose summary conveys the non-obvious behaviour the signature hides — that it retries with EXPONENTIAL backoff. @param delayMs notes the unit (milliseconds) and that it's the base that doubles each attempt. @param attempts notes the >= 1 requirement. @throws documents both the RangeError when attempts < 1 AND that it rethrows the last error after exhausting attempts. @returns and @param fn documented. No redundant {type} (it's TS).",
+      "files": ["fixtures/retry.ts"]
+    }
+  ]
+}

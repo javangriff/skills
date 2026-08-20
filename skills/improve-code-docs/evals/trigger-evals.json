@@ -1,0 +1,22 @@
+[
+  {"query": "can you go through src/utils/dateHelpers.ts and add jsdoc to everything? none of the functions have any", "should_trigger": true},
+  {"query": "this composable is a mess of comments that just repeat what the code does — tidy it up and make it less noisy", "should_trigger": true},
+  {"query": "before I open this PR can you do a documentation pass on the files I changed", "should_trigger": true},
+  {"query": "add proper param and return docs to the exported helpers in libs/ui/src/common/colorUtils.ts", "should_trigger": true},
+  {"query": "comments in OrderSummary.vue are way too verbose, trim them down to something readable", "should_trigger": true},
+  {"query": "I just wrote validatePort and normalizePort in portUtils.ts, make sure they've got decent doc comments", "should_trigger": true},
+  {"query": "our PR reviewer keeps flagging missing jsdoc — can you sweep the changed files and add them", "should_trigger": true},
+  {"query": "this file is full of // set x to y style comments that add nothing, clean it up", "should_trigger": true},
+  {"query": "the functions in useCheckout.ts aren't documented at all, fix that", "should_trigger": true},
+  {"query": "document the event handlers and computeds in the script block of SearchInput.vue", "should_trigger": true},
+  {"query": "write a README for this package explaining how to install and use it", "should_trigger": false},
+  {"query": "document our REST API endpoints in the OpenAPI/swagger spec", "should_trigger": false},
+  {"query": "explain what this gnarly regex does, I genuinely can't read it", "should_trigger": false},
+  {"query": "add a docstring to this Python function in scripts/etl.py", "should_trigger": false},
+  {"query": "set up typedoc so we can generate an HTML docs site from our jsdoc", "should_trigger": false},
+  {"query": "rename these variables so the code is more self-documenting", "should_trigger": false},
+  {"query": "write a Confluence page describing the ordering flow architecture", "should_trigger": false},
+  {"query": "strip every comment out of this file, I don't want any comments at all", "should_trigger": false},
+  {"query": "add a TODO comment here reminding us to handle the timeout case later", "should_trigger": false},
+  {"query": "write unit tests for the functions in cartUtils.ts", "should_trigger": false}
+]
