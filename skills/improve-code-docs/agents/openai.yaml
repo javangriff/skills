@@ -1,0 +1,3 @@
+interface:
+  display_name: "Improve Code Docs"
+  short_description: "JSDoc and comment cleanup pass over TS, JS and Vue"

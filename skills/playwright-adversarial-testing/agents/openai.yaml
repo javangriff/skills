@@ -1,0 +1,3 @@
+interface:
+  display_name: "Playwright Adversarial Testing"
+  short_description: "Attack a branch's UI in a real browser"

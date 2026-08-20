@@ -1,0 +1,3 @@
+interface:
+  display_name: "Improve Code Organisation"
+  short_description: "Regroup a Vue script setup by logical concern"
