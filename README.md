@@ -8,25 +8,12 @@ to one provider.
 
 ## Install
 
-### Any agent
-
 ```bash
 npx skills@latest add javangriff/skills
 ```
 
 Pick the skills you want and the agents to install them on. Files are copied
 into place, so pull later changes with `npx skills@latest update`.
-
-### This machine (symlinked, for editing)
-
-```bash
-git clone https://github.com/javangriff/skills.git ~/code/skills
-~/code/skills/scripts/link-skills.sh
-```
-
-Each skill is symlinked into `~/.claude/skills` and `~/.codex/skills`, so a
-`git pull` updates every installed skill and editing a skill mid-session is
-editing the repo. Re-run the script after adding, removing, or renaming a skill.
 
 ## Skills
 
