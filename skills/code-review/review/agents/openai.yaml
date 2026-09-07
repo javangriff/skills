@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review"
+  short_description: "Full code review: picks and runs the right passes for a diff, PR, or branch"

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review TypeScript"
+  short_description: "Type-level defects the compiler accepts but that lie or leak"

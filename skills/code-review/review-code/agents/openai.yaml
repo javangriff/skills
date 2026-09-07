@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review Code"
+  short_description: "Correctness bugs and quality smells in any diff"

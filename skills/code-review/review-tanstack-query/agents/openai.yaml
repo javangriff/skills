@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review TanStack Query"
+  short_description: "Cache and reactivity defects in TanStack Query code"

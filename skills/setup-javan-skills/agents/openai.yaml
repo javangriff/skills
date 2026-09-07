@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Javan Skills"
+  short_description: "Record where a repo tracks issues so the review skills can read them"
+policy:
+  allow_implicit_invocation: false

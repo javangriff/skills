@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review Acceptance Criteria"
+  short_description: "Checks a diff against what its ticket or spec asked for"
