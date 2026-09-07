@@ -20,8 +20,9 @@ into place, so pull later changes with `npx skills@latest update`.
 | Skill | What it does |
 | --- | --- |
 | [grill-me](./skills/grill-me/SKILL.md) | Interviews you relentlessly about a plan or design until every branch of the decision tree is resolved. |
-| [improve-code-docs](./skills/improve-code-docs/SKILL.md) | Documentation pass over TypeScript, JavaScript, and Vue files: adds missing JSDoc, fixes docs that drifted from the signature, and cuts comments that restate the code. |
-| [improve-code-organisation](./skills/improve-code-organisation/SKILL.md) | Reorganises a Vue 3 `<script setup>` component so it reads by logical concern instead of by API type. |
+| [improve-code-docs](./skills/improve-code/improve-code-docs/SKILL.md) | Documentation pass over TypeScript, JavaScript, and Vue files: adds missing JSDoc, fixes docs that drifted from the signature, and cuts comments that restate the code. |
+| [improve-code-organisation](./skills/improve-code/improve-code-organisation/SKILL.md) | Reorganises a Vue 3 `<script setup>` component so it reads by logical concern instead of by API type. |
+| [improve-code-simplicity](./skills/improve-code/improve-code-simplicity/SKILL.md) | Adversarial pass over a change that cuts what nothing present needs: one-caller abstractions, options nobody sets, unreachable branches, premature extensibility. Also the review skill's simplicity pass. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
 | [simplified-technical](./skills/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |

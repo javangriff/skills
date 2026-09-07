@@ -12,6 +12,7 @@ The passes are skills in their own right:
 | Pass | Runs when |
 | --- | --- |
 | `review-code` | always |
+| `improve-code-simplicity` (report mode) | always |
 | `review-typescript` | any TypeScript source file changed |
 | `review-vue` | any `.vue` file changed |
 | `review-tanstack-query` | any changed source file contains query identifiers |
@@ -75,6 +76,7 @@ If the harness can run subagents, start every selected pass in **one step** so t
 - the diff command from step 1
 - its file list from step 2 (absolute paths)
 - the effort level and word budget
+- for `improve-code-simplicity`: the words "report mode", so it makes no edits
 - for `review-tanstack-query`: the query module to cross-reference, when you can see one in the diff's directory
 - for `review-acceptance-criteria`: the branch, PR title, head branch, and last commit subject
 
@@ -95,7 +97,7 @@ Wait for every pass, then produce **one** report in this order.
 2. **Findings.** Every finding from every code pass, in a single list ordered by severity, not grouped by pass. Bugs and hard findings first, then judgement calls. Each finding is the claim, the failure scenario or smell, and the fix, with `file:line`.
 3. **Notes.** Skipped passes and why, out-of-scope changes, criteria that could not be verified.
 
-Deduplicate: when two passes flag the same line, keep the more specific write-up. A domain pass beats `review-code`; `review-tanstack-query` beats `review-vue` for anything inside a query or mutation call; `review-typescript` beats `review-code` for anything about a type.
+Deduplicate: when two passes flag the same line, keep the more specific write-up. A domain pass beats `review-code`; `review-tanstack-query` beats `review-vue` for anything inside a query or mutation call; `review-typescript` beats `review-code` for anything about a type; `improve-code-simplicity` beats every other pass for anything about code that is not needed.
 
 Then honour `--fix` or `--comment`:
 

@@ -8,9 +8,10 @@ Skills live one directory deep, flat, with one exception:
 
 - `skills/<skill-name>/SKILL.md` is published in this public repo.
 - `skills/<bucket>/<skill-name>/SKILL.md` is allowed only for a family of skills
-  that ship together and call each other. `skills/code-review/` is the one
-  bucket today. Skill names must stay unique across the whole tree, because
-  every harness flattens them into one namespace.
+  that ship together and call each other. `skills/code-review/` and
+  `skills/improve-code/` are the buckets today. Skill names must stay unique
+  across the whole tree, because every harness flattens them into one
+  namespace.
 - `skills-local/<skill-name>/SKILL.md` is gitignored. Skills that name private
   or employer-specific internals go here, never in `skills/`.
 

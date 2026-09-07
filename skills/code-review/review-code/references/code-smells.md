@@ -20,7 +20,6 @@ Adapted from Fowler's *Refactoring*, chapter 3.
 - **Repeated Switches.** The same `switch` or `if` cascade on the same discriminator recurs across the change. → Replace with a lookup map or polymorphism that both sites share.
 - **Shotgun Surgery.** One logical change forced scattered edits across many files in the diff. → Gather what changes together into one module.
 - **Divergent Change.** One file or module is edited for several unrelated reasons. → Split so each module changes for one reason.
-- **Speculative Generality.** Abstraction, parameters, or hooks added for needs nothing in the change requires. → Delete it. Inline until a real need shows.
 - **Message Chains.** Long `a.b().c().d()` navigation the caller should not depend on. → Hide the walk behind one method on the first object.
 - **Middle Man.** A class or function that mostly delegates onward. → Cut it and call the real target directly.
 
