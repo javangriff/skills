@@ -42,7 +42,7 @@ For every finding report:
 - what actually goes wrong at runtime, as a concrete scenario, not a restatement of the rule
 - the specific replacement code
 
-A finding you cannot state a failure scenario for is not a finding. Drop it.
+A finding you cannot state a failure scenario for is not a finding. Drop it. The exception is a removable watcher: there the cost is the indirection itself — a ref and a watcher where a handler would do, firing on writes the call site cannot see — so state that cost concretely instead of inventing a runtime failure. Do not downgrade such a finding to a style aside because nothing triggers it today.
 
 Rank by severity: reactivity that is silently broken at runtime first, then watchers that can be deleted, then style-level reactivity preferences.
 

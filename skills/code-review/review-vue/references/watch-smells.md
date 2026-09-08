@@ -43,6 +43,12 @@ watch(selectedRegion, region => { onRegionChange(region) })
 
 **Why it matters beyond tidiness:** a watcher fires for *every* change to the value, including resets, programmatic seeding, and route-driven restores. An event listener fires only on actual user interaction. Conflating the two causes duplicate API calls and spurious form-dirty state.
 
+**Report it even when no programmatic writer exists yet.** The common mistake is to check whether anything writes the value today, find nothing, and downgrade the finding to "latent" or "style-level, not worth restructuring". Do not. The value is public API the moment it is a model on a child: the next reset button, deep link, or route restore turns the watcher into a real bug, and the diff under review is the cheap moment to fix it. Rank it with removable watchers, not with style preferences.
+
+The finding stands on what is true now, so state it that way: the ref plus the watcher is two moving parts where the handler is one, and the watcher's body already runs on writes the author cannot see from the call site. Name the child's event and show the handler — a reader should not have to imagine a future writer to accept the finding.
+
+**The precondition to establish, and how:** the value is written *only* by the child's model. Search the component for every write to it before reporting — an assignment, a `setFieldValue`, a reset helper, a store action, a seed from the route. Find one and this is not the smell; the watcher is the only thing that catches every path, and swapping it for a listener drops the others (see the `clearFilters` case under "When a watcher **is** correct").
+
 ## 4. Watching something a parent should have passed as a prop
 
 A watcher reaching into a store, the route, or an injected value to recompute local state is often a component that should simply receive that value as a prop and stay presentational.
@@ -119,3 +125,4 @@ Do not flag these:
 - Reacting to a change with something that is not a value — opening a dialog, focusing an input, scrolling.
 - Bridging to non-reactive external systems: a chart instance, a map SDK, a websocket subscription.
 - Effects that need the old value — `watch(x, (next, prev) => ...)` has no `computed` equivalent.
+- A watcher on a child's model value that **more than one thing writes** — the child's event plus a reset button, a deep link, or a store restore. The watcher is the only hook that sees every path; an event listener silently misses the programmatic ones. Rule 3 does not apply here.
