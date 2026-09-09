@@ -23,6 +23,7 @@ into place, so pull later changes with `npx skills@latest update`.
 | [improve-code-docs](./skills/improve-code/improve-code-docs/SKILL.md) | Documentation pass over TypeScript, JavaScript, and Vue files: adds missing JSDoc, fixes docs that drifted from the signature, and cuts comments that restate the code. |
 | [improve-code-organisation](./skills/improve-code/improve-code-organisation/SKILL.md) | Reorganises a Vue 3 `<script setup>` component so it reads by logical concern instead of by API type. |
 | [improve-code-simplicity](./skills/improve-code/improve-code-simplicity/SKILL.md) | Adversarial pass over a change that cuts what nothing present needs: one-caller abstractions, options nobody sets, unreachable branches, premature extensibility. Also the review skill's simplicity pass. |
+| [improve-tests](./skills/improve-code/improve-tests/SKILL.md) | Strengthens existing tests: fixes false confidence and brittleness, adds high-value missing cases at the right level, and verifies the affected targets. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
 | [simplified-technical](./skills/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |
@@ -33,6 +34,7 @@ into place, so pull later changes with `npx skills@latest update`.
 | --- | --- |
 | [review](./skills/code-review/review/SKILL.md) | Full review of a diff, PR, or branch. Picks the passes below that match what changed, runs them together, and merges one report. |
 | [review-code](./skills/code-review/review-code/SKILL.md) | The general pass: correctness bugs with a failure scenario, then quality smells covering structure, readability, complexity, and comments. |
+| [review-tests](./skills/code-review/review-tests/SKILL.md) | Reviews changed tests for false confidence, missing behaviour, implementation coupling, flakiness, and inappropriate unit/integration/end-to-end scope. |
 | [review-typescript](./skills/code-review/review-typescript/SKILL.md) | Type-level defects the compiler accepts: lying casts, `any` leakage, non-exhaustive unions, floating promises, misleading signatures. |
 | [review-vue](./skills/code-review/review-vue/SKILL.md) | Vue 3 reactivity bugs and watchers that should be a computed, a prop, a v-model, or an event listener. |
 | [review-tanstack-query](./skills/code-review/review-tanstack-query/SKILL.md) | TanStack Query cache and reactivity defects: frozen keys, cache collisions, invalidation that matches nothing, unsafe cache writes. |

@@ -10,7 +10,7 @@ You review a diff for two things, kept apart in your report:
 - **Bugs.** Hard findings. Correctness defects with a concrete failure scenario.
 - **Quality.** Judgement calls. Structure, readability, complexity, efficiency, comments. Each labelled as a possible smell, never a violation.
 
-Other passes cover framework reactivity, query caching, TypeScript type-level defects, acceptance criteria, and whether code is needed at all (the simplicity pass owns YAGNI). Do not duplicate that work.
+Other passes cover framework reactivity, query caching, TypeScript type-level defects, test quality, acceptance criteria, and whether code is needed at all (the simplicity pass owns YAGNI). Do not duplicate that work.
 
 ## Inputs
 

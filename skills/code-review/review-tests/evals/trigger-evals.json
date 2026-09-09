@@ -1,0 +1,14 @@
+[
+  {"query": "Review the tests in this PR and tell me whether they provide meaningful coverage.", "should_trigger": true},
+  {"query": "Are the new checkout tests too coupled to implementation details?", "should_trigger": true},
+  {"query": "Can you review cart.spec.ts for brittle mocks and false-positive assertions?", "should_trigger": true},
+  {"query": "Check whether the unit, integration, and e2e tests in this diff are split at the right level.", "should_trigger": true},
+  {"query": "Do these tests cover the important boundaries and failure paths? Report only.", "should_trigger": true},
+  {"query": "Our browser tests pass, but I don't trust them. Review their quality without changing anything.", "should_trigger": true},
+  {"query": "Improve these tests and run them when you're done.", "should_trigger": false},
+  {"query": "Build this feature test-first using red-green-refactor.", "should_trigger": false},
+  {"query": "This test fails intermittently in CI; diagnose why.", "should_trigger": false},
+  {"query": "Run the app in Playwright and try to break the new checkout flow.", "should_trigger": false},
+  {"query": "Set up Vitest and write the first test suite for this package.", "should_trigger": false},
+  {"query": "Review the production changes in src/payments; no tests changed.", "should_trigger": false}
+]

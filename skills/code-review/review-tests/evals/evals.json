@@ -1,0 +1,19 @@
+{
+  "skill_name": "review-tests",
+  "evals": [
+    {
+      "id": 0,
+      "name": "find-false-confidence",
+      "prompt": "Review pricing.test.ts against pricing.ts. Focus on whether each test can detect the behaviour it claims. Report only.",
+      "expected_output": "Reports the recomputed expected total as tautological, the `toBeDefined` assertion as too weak to verify the changed cart contents, and the unawaited rejection assertion as a possible false pass. It does not complain merely because the coherent discount test has two assertions. Each hard finding includes a concrete faulty implementation that could pass or an execution sequence that false-passes, plus a specific fix.",
+      "files": ["fixtures/pricing.ts", "fixtures/pricing.test.ts"]
+    },
+    {
+      "id": 1,
+      "name": "keep-contract-interaction",
+      "prompt": "Review notifier.test.ts against notifier.ts. I'm particularly worried that it uses a mock. Report only.",
+      "expected_output": "Does not categorically reject the mock or its call-count assertion: sending exactly one message is the observable contract and there is no returned state to inspect. It may suggest clearer naming or a fake only if tied to a concrete benefit, but should ideally report no hard finding and no high-confidence judgement call.",
+      "files": ["fixtures/notifier.ts", "fixtures/notifier.test.ts"]
+    }
+  ]
+}

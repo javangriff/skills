@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Tests"
+  short_description: "Finds false confidence, brittleness, and coverage gaps"
+  default_prompt: "Use $review-tests to review the changed tests for confidence, resilience, and appropriate scope."

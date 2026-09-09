@@ -1,0 +1,14 @@
+[
+  {"query": "Improve the tests I just added and run the affected suite.", "should_trigger": true},
+  {"query": "Strengthen cart.spec.ts; I think its assertions are too weak.", "should_trigger": true},
+  {"query": "Clean up these brittle mock-heavy tests without changing production behaviour.", "should_trigger": true},
+  {"query": "Make this flaky test suite deterministic and verify it.", "should_trigger": true},
+  {"query": "Move these cases to the right mix of unit and integration tests.", "should_trigger": true},
+  {"query": "Do a test-quality improvement pass before I push.", "should_trigger": true},
+  {"query": "Review whether these tests are good, but don't edit anything.", "should_trigger": false},
+  {"query": "Implement the new checkout feature with red-green-refactor.", "should_trigger": false},
+  {"query": "Write unit tests for this untested parser.", "should_trigger": false},
+  {"query": "Diagnose why this one CI test times out.", "should_trigger": false},
+  {"query": "Try to break my UI changes in a real browser.", "should_trigger": false},
+  {"query": "Raise our repository coverage threshold to 90 percent.", "should_trigger": false}
+]

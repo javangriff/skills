@@ -1,0 +1,4 @@
+interface:
+  display_name: "Improve Tests"
+  short_description: "Strengthens tests without changing production behavior"
+  default_prompt: "Use $improve-tests to strengthen the tests in my current change and run the affected test targets."

@@ -13,6 +13,7 @@ The passes are skills in their own right:
 | --- | --- |
 | `review-code` | always |
 | `improve-code-simplicity` (report mode) | always |
+| `review-tests` | any recognised test, fixture, snapshot, or test-runner configuration file changed |
 | `review-typescript` | any TypeScript source file changed |
 | `review-vue` | any `.vue` file changed |
 | `review-tanstack-query` | any changed source file contains query identifiers |
@@ -59,6 +60,7 @@ changed=$(mktemp)
   git ls-files --others --exclude-standard; } | sort -u > "$changed"
 grep -E '\.(ts|tsx|mts|cts)$' "$changed"                          # review-typescript
 grep -E '\.vue$' "$changed"                                        # review-vue, and review-typescript when lang="ts"
+grep -Ei '(^|/)(__tests__|tests?|specs?|fixtures?|snapshots?|e2e|cypress|playwright)(/|$)|(\.(test|spec)\.[^/]+$|_(test|spec)\.[^/]+$|(^|/)test_[^/]+\.[^/]+$|[[:alnum:]]Tests?\.[^/]+$|\.snap$)|(^|/)(jest|vitest|playwright|cypress)\.config\.|(^|/)(pytest\.ini|conftest\.py|tox\.ini|phpunit\.xml)$' "$changed"  # review-tests
 grep -E '\.(ts|tsx|mts|cts|js|jsx|mjs|vue|svelte)$' "$changed" | tr '\n' '\0' \
   | xargs -0 grep -lE 'useQuery|useMutation|useInfiniteQuery|useQueryClient|useSuspenseQuery|queryOptions|queryKey|queryFn|invalidateQueries|setQueryData|getQueryData|cancelQueries|prefetchQuery|@tanstack/'   # review-tanstack-query
 ```
@@ -77,6 +79,7 @@ If the harness can run subagents, start every selected pass in **one step** so t
 - its file list from step 2 (absolute paths)
 - the effort level and word budget
 - for `improve-code-simplicity`: the words "report mode", so it makes no edits
+- for `review-tests`: the changed test-file list; it follows those tests into related production code itself
 - for `review-tanstack-query`: the query module to cross-reference, when you can see one in the diff's directory
 - for `review-acceptance-criteria`: the branch, PR title, head branch, and last commit subject
 
@@ -98,6 +101,8 @@ Wait for every pass, then produce **one** report in this order.
 3. **Notes.** Skipped passes and why, out-of-scope changes, criteria that could not be verified.
 
 Deduplicate: when two passes flag the same line, keep the more specific write-up. A domain pass beats `review-code`; `review-tanstack-query` beats `review-vue` for anything inside a query or mutation call; `review-typescript` beats `review-code` for anything about a type; `improve-code-simplicity` beats every other pass for anything about code that is not needed.
+
+`review-tests` beats `review-code` and `improve-code-simplicity` for findings about whether a test provides confidence, is coupled to implementation, or belongs at the wrong test level. The simplicity pass still owns unnecessary production code.
 
 Then honour `--fix` or `--comment`:
 

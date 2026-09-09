@@ -1,0 +1,12 @@
+{
+  "skill_name": "improve-tests",
+  "evals": [
+    {
+      "id": 0,
+      "name": "remove-order-dependence",
+      "prompt": "Improve basket.test.ts so the tests are trustworthy. Do not change basket.ts.",
+      "expected_output": "Removes the shared mutable basket and creates controlled state for each test, so the total test no longer depends on the add test running first. Keeps both behaviours as separate tests with specific assertions. Does not add sleeps, mocks, a new dependency, or production changes. Runs the narrow test command if the fixture environment exposes one; otherwise reports that verification could not be run rather than inventing a successful command.",
+      "files": ["fixtures/basket.ts", "fixtures/basket.test.ts"]
+    }
+  ]
+}
