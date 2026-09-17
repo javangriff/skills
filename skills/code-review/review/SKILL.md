@@ -67,7 +67,23 @@ grep -E '\.(ts|tsx|mts|cts|js|jsx|mjs|vue|svelte)$' "$changed" | tr '\n' '\0' \
 
 Deleted files are excluded. The query grep runs over source files only, so documentation that mentions `useQuery` does not trigger the pass. A pass whose input is empty is **skipped, and the report says so**. A skipped pass that is never mentioned reads as a pass that found nothing.
 
-The acceptance-criteria pass always runs. It reads the issue-tracker config if one exists (in the repo, or at user level for this repo), falls back to spec files if not, and skips itself when it finds nothing. Give it what you already know so it does not repeat the lookup: the branch name, the PR title and head branch if any, and the most recent commit subject.
+The acceptance-criteria pass always runs. It falls back to spec files when there is no tracker, and skips itself when it finds nothing. Give it what you already know so it does not repeat the lookup: the branch name, the PR title and head branch if any, and the most recent commit subject.
+
+### Fetch the ticket before you dispatch
+
+**You fetch the issue, not the pass.** A pass runs with a narrower toolset than you do, so a tracker that the harness exposes as a tool may be unreachable from inside it. Resolving that after five passes have run wastes the whole review.
+
+1. Read the issue-tracker config: `docs/agents/issue-tracker.md` in the repo, else `${XDG_CONFIG_HOME:-$HOME/.config}/javan-skills/<host>/<owner>/<repo>/issue-tracker.md` keyed by `origin`. With no config there is nothing to fetch: dispatch under the second case below, and say in the report that the `setup-javan-skills` skill is how to create one.
+2. Resolve a ticket key with the configured pattern against the branch name, the PR title, the PR head branch, then the newest commit subject.
+3. Fetch the issue with the method the config names. When that is a harness tool whose schema is not loaded, load it first. When it is a CLI or an API call, run it.
+
+Then dispatch with what you got:
+
+- **Fetched.** Pass the issue verbatim — key, summary, description, acceptance criteria, and comments — as an input. The pass reads what you hand it and fetches nothing.
+- **No key found, or the config points only at spec files.** Say so in the inputs. The pass runs its own spec-file discovery.
+- **Fetch failed** through access, permissions, or a missing issue. Pass the key and the exact failure. The pass reports it and does not invent criteria. Report the failure in your own output too, in the acceptance-criteria section — a review that silently skipped the ticket must never read like a review that checked it.
+
+Never write to the tracker while doing this. You read it.
 
 Set a word budget per pass: 400 words at `low` and `medium`, 800 at `high` and `max`.
 
@@ -81,7 +97,7 @@ If the harness can run subagents, start every selected pass in **one step** so t
 - for `improve-code-simplicity`: the words "report mode", so it makes no edits
 - for `review-tests`: the changed test-file list; it follows those tests into related production code itself
 - for `review-tanstack-query`: the query module to cross-reference, when you can see one in the diff's directory
-- for `review-acceptance-criteria`: the branch, PR title, head branch, and last commit subject
+- for `review-acceptance-criteria`: the issue you fetched (or the reason you could not), plus the branch, PR title, head branch, and last commit subject
 
 If the harness has no subagents, run the passes in sequence yourself by calling the Skill tool with each pass's name and the same inputs, and collect each result before starting the next.
 

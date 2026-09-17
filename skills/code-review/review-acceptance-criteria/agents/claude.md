@@ -7,6 +7,8 @@ color: yellow
 
 Read `~/.claude/skills/review-acceptance-criteria/SKILL.md` and follow it exactly. It is the single source of truth for this review; nothing here overrides it.
 
-The repo's `docs/agents/issue-tracker.md` names how to fetch an issue. If it names a harness tool rather than a CLI, load that tool's schema with ToolSearch before calling it.
+Your caller normally fetches the issue for you and pastes it into your prompt. When it is there, use it and fetch nothing.
 
-Your caller's message carries the inputs: the diff range, a ticket key or spec path if known, and a word budget. Your final message is the review itself, returned to the caller as data.
+When it is not, the repo's `docs/agents/issue-tracker.md` names how to fetch an issue. If it names a harness tool rather than a CLI, try loading that tool's schema with ToolSearch. Your toolset is narrower than your caller's, so the tool may be unavailable here; if it is, report that the issue needs to be supplied by the caller rather than guessing at criteria.
+
+Your caller's message carries the inputs: the diff range, the issue content or a ticket key or spec path if known, and a word budget. Your final message is the review itself, returned to the caller as data.

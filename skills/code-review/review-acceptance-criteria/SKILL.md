@@ -9,7 +9,11 @@ You check whether a code change actually does what was asked for. You review **i
 
 ## Inputs
 
-A caller normally gives you a **diff range** and either a **ticket key**, an **issue reference**, or a **spec path**. When invoked directly with none of these, derive the diff range yourself and run the discovery below:
+A caller normally gives you a **diff range** and either the **issue itself**, a **ticket key**, an **issue reference**, or a **spec path**.
+
+**When the caller supplies the issue content, that is your spec.** Use it as given and skip steps 1 and 2. Do not re-fetch it: your toolset is narrower than the caller's, so a tracker they reached may be unreachable from here, and a failed re-fetch would throw away a spec you already have. If the caller instead reports that the fetch failed, say so in your report and stop; never substitute criteria you invented.
+
+When invoked directly with none of these, derive the diff range yourself and run the discovery below:
 
 ```bash
 base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)
@@ -51,7 +55,7 @@ If nothing is found, report "no spec available" as the whole result and stop.
 
 ## Step 2: fetch and read it
 
-Fetch the issue with the method the config describes (a CLI, an API call, or a tracker tool the harness exposes). For a spec file, read it. If fetching fails through lack of access, a missing issue, or permissions, report that plainly and stop. Never invent criteria.
+Fetch the issue with the method the config describes (a CLI, an API call, or a tracker tool the harness exposes). If the method is a harness tool you cannot see in your own toolset, that is a fetch failure, not a reason to guess: report that the pass needs the issue supplied by its caller and stop. For a spec file, read it. If fetching fails through lack of access, a missing issue, or permissions, report that plainly and stop. Never invent criteria.
 
 Read the description, any acceptance criteria field or section, **and the comments**. Requirements are frequently amended in comments rather than in the description.
 
