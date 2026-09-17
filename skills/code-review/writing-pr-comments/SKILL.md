@@ -44,11 +44,35 @@ Write as a colleague reading a teammate's work, not a linter.
 - Stay on the line you are commenting on. A tangent about naming or an unrelated rule belongs in its own comment, or nowhere.
 - Cut the implementation tip that is not needed to make the point.
 
+## Replying as the author
+
+A reply is not a finding, so the shape above inverts. The reviewer has already made the claim; your job is to say where you stand and what happens next. Answer every comment, including the nits, because the reviewer cannot tell silence from disagreement.
+
+Write a reply as: **your position, the reason it holds, and what you have done or will do.** Keep the tone rules and the provenance rule exactly as they are above; they matter more here, not less.
+
+The provenance rule binds the author too, in both directions. Describe a check at the precision you ran it: if you satisfied yourself by reading the code, say that, and do not promote it into a test or a run that exists only in the reply. Describe a change in the tense it is in: a fix you have written is done, a fix you intend is an offer, and the two must not be mixed. Offering the cheap proof you have not yet run ("happy to add a test that mutates the prop") is honest and often the most useful thing in the thread; claiming it already passes is not.
+
+End on a commitment, which is the author-side mirror of a scope signal. Say which of these is true:
+
+| Commitment | Use when |
+|---|---|
+| "done in this PR" | You made the change. Say so plainly and stop. |
+| "raising a follow-up, linked here" | Valid, but not this PR's job. Link the ticket in the reply. |
+| "leaving as is unless you disagree" | You think the comment does not hold. |
+| "your call, happy either way" | You genuinely do not mind and want the thread closed. |
+
+**When you disagree,** give the reviewer the reading you have and the room to correct you. Show the specific thing they may not have seen, say what you checked and how, and offer the cheap proof if one exists. "I think this one is safe, though tell me if I have misread it" opens a door that "this is incorrect" closes. Never make it a contest of who is right; the code either behaves that way or it does not.
+
+**When you agree but cannot do it here,** the difficulty is sounding like a constraint rather than a brush-off. Name the cost concretely, so the reviewer can weigh it: what the real fix touches, roughly what it takes, and why it does not belong in this change. Then offer the smaller thing you can do now, and say plainly that it is containment rather than a fix. Offer to take it out of the PR if they would rather block on the real one.
+
+**When you agree,** one line. "Good catch, dropped in this PR." Padding an easy agreement wastes the reviewer's attention for the threads that need it.
+
 ## Posting mechanics
 
 - An inline comment must anchor to a line **present in the diff**. Parse the diff's hunk headers for addressable right-side lines before you post; a comment on an unchanged line is rejected.
 - When the line you mean is not in the diff, anchor on the nearest changed line that caused the problem and name the real line in the body.
 - Post as a plain comment. Reach for "request changes" or "approve" only when the user asks for a verdict.
+- A reply anchors to the thread it answers, so the diff-line rules above do not apply to it.
 - Post the batch as one review rather than many single comments, then read the result back to confirm each landed on the line you intended.
 
 ## Common mistakes
@@ -59,6 +83,7 @@ Write as a colleague reading a teammate's work, not a linter.
 | Observed and read-from-code findings look identical | Say which. It changes how much the author trusts it. |
 | Provenance embellished into a run that never happened | Mirror the evidence at the precision you hold it. "Reading the code" is a complete answer. |
 | A venue invented around real evidence ("I hit this in the browser" from a bare "verified") | Keep the venue unnamed unless you were told it. |
+| A reply claims a check or a change that has not happened ("there is a test covering it", "I have put it in this PR") | Say what you did at its real precision, and offer the rest as an offer. |
 | Every finding posted at equal weight | Triage. Drop or fold the marginal ones. |
 | Prescriptive code block for a one-word change | Say it in words. |
 | Comment drifts into an unrelated rule | Delete the tangent. |
