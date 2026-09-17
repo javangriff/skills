@@ -39,6 +39,7 @@ into place, so pull later changes with `npx skills@latest update`.
 | [review-vue](./skills/code-review/review-vue/SKILL.md) | Vue 3 reactivity bugs and watchers that should be a computed, a prop, a v-model, or an event listener. |
 | [review-tanstack-query](./skills/code-review/review-tanstack-query/SKILL.md) | TanStack Query cache and reactivity defects: frozen keys, cache collisions, invalidation that matches nothing, unsafe cache writes. |
 | [review-acceptance-criteria](./skills/code-review/review-acceptance-criteria/SKILL.md) | Checks the diff against the ticket, issue, or spec behind it, and lists out-of-scope changes. |
+| [writing-pr-comments](./skills/code-review/writing-pr-comments/SKILL.md) | Turns review findings into PR comments an author can act on: the claim, the consequence, how you know, a suggested fix, and an explicit scope signal. |
 
 ## Layout and conventions
 

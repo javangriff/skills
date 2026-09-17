@@ -1,0 +1,3 @@
+interface:
+  display_name: "Writing PR Comments"
+  short_description: "Turn review findings into PR comments an author can act on"
