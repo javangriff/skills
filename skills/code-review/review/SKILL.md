@@ -107,7 +107,7 @@ Deduplicate: when two passes flag the same line, keep the more specific write-up
 Then honour `--fix` or `--comment`:
 
 - `--fix` applies **code findings only**. An unmet acceptance criterion means writing a feature, not applying a fix; report it and stop.
-- `--comment` posts each finding as an inline comment through the forge CLI (`gh pr review <n> --comment`, or `glab mr note`) with the same claim, scenario, and fix text.
+- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the merged findings, the diff command from step 1, and the PR or MR number. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted.
 
 ## Guard rails
 
