@@ -25,6 +25,7 @@ into place, so pull later changes with `npx skills@latest update`.
 | [improve-code-simplicity](./skills/improve-code/improve-code-simplicity/SKILL.md) | Adversarial pass over a change that cuts what nothing present needs: one-caller abstractions, options nobody sets, unreachable branches, premature extensibility. Also the review skill's simplicity pass. |
 | [improve-tests](./skills/improve-code/improve-tests/SKILL.md) | Strengthens existing tests: fixes false confidence and brittleness, adds high-value missing cases at the right level, and verifies the affected targets. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
+| [staying-in-scope](./skills/staying-in-scope/SKILL.md) | Decides whether a change belongs in the work at hand: checks prior art before adopting a pattern, so a local improvement does not silently split a repo-wide convention, and labels review findings that need their own ticket. |
 | [simplified-technical](./skills/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |
 

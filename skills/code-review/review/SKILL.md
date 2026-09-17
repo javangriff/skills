@@ -21,6 +21,13 @@ The passes are skills in their own right:
 
 Each pass's own description says what it finds, and each carries its own method and output format. **Your prompt to a pass is its inputs, never its method.** Restating the method here would let two copies drift.
 
+Every code pass also loads the `staying-in-scope` skill and labels its findings with it, so a finding that is correct but does not belong in this change arrives marked rather than dropped or presented as actionable:
+
+- `[out of scope]` — correct, but this change did not cause it.
+- `[convention change]` — correct in isolation, but the repo already does it another way, so the real fix is repo-wide.
+
+You do not apply these labels yourself and you do not second-guess them. You route them.
+
 ## Arguments
 
 All optional:
@@ -28,7 +35,8 @@ All optional:
 - No target: the working tree plus the branch, compared with the main branch's merge-base.
 - A PR or MR number, a branch name, or a path: that target.
 - An effort level: `low`, `medium` (default), `high`, or `max`. Forwarded to every pass. At `low` and `medium`, passes report only findings they can demonstrate; at `high` and `max` they may add lower-confidence suggestions, marked as such.
-- `--fix`: apply code findings to the working tree after the review.
+- `--fix`: apply unlabelled code findings to the working tree after the review. Labelled findings are held back for triage.
+- `--fix-all`: as `--fix`, but also applies labelled findings. Only use it when the caller asked for it by name.
 - `--comment`: post findings as inline comments on the PR or MR.
 
 ## Step 1: pin and validate the fixed point
@@ -113,17 +121,23 @@ The Vue and TanStack passes overlap on `.vue` files that contain queries. That i
 Wait for every pass, then produce **one** report in this order.
 
 1. **Acceptance criteria.** The verdict table exactly as the pass returned it, first, because "this does not do what was asked" outranks any code finding. This section is never ranked against or merged with code findings; a change can pass one and fail the other. If the pass was skipped, one line saying why (no tracker config, no spec found).
-2. **Findings.** Every finding from every code pass, in a single list ordered by severity, not grouped by pass. Bugs and hard findings first, then judgement calls. Each finding is the claim, the failure scenario or smell, and the fix, with `file:line`.
-3. **Notes.** Skipped passes and why, out-of-scope changes, criteria that could not be verified.
+2. **Findings.** Every **unlabelled** finding from every code pass, in a single list ordered by severity, not grouped by pass. Bugs and hard findings first, then judgement calls. Each finding is the claim, the failure scenario or smell, and the fix, with `file:line`.
+3. **Follow-up findings — not actioned.** Every finding a pass labelled, each keeping its label, its evidence, and its one-line statement of what a consistent fix would touch. These are real findings held back for a scope decision, not rejected ones, so never merge them into the list above and never drop them for being labelled. Order `[convention change]` before `[out of scope]`, since the first is a decision about the codebase and the second is a decision about a ticket. Close the section with one line telling the caller their options: action them now, or raise them as follow-ups.
+4. **Notes.** Skipped passes and why, criteria that could not be verified, and the acceptance-criteria pass's own out-of-scope notes.
+
+The acceptance-criteria pass's out-of-scope notes are a different thing from an `[out of scope]` label, and the two must not be pooled. That pass lists **code the change contains that no criterion asked for**; the label marks **a finding the change did not cause**. They point in opposite directions, so leave the pass's notes where they are, in Notes.
 
 Deduplicate: when two passes flag the same line, keep the more specific write-up. A domain pass beats `review-code`; `review-tanstack-query` beats `review-vue` for anything inside a query or mutation call; `review-typescript` beats `review-code` for anything about a type; `improve-code-simplicity` beats every other pass for anything about code that is not needed.
 
 `review-tests` beats `review-code` and `improve-code-simplicity` for findings about whether a test provides confidence, is coupled to implementation, or belongs at the wrong test level. The simplicity pass still owns unnecessary production code.
 
+A labelled finding survives deduplication. When one pass labels a finding and another reports the same line unlabelled, keep the label and the more specific write-up: the pass that labelled it did the prior-art check, and the one that did not has no evidence against it.
+
 Then honour `--fix` or `--comment`:
 
-- `--fix` applies **code findings only**. An unmet acceptance criterion means writing a feature, not applying a fix; report it and stop.
-- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the merged findings, the diff command from step 1, and the PR or MR number. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted.
+- `--fix` applies **unlabelled code findings only**. After applying, print the held-back findings with their labels and one line saying they were held back for a scope decision and that `--fix-all` would apply them. Never apply a labelled finding under plain `--fix`, and never quietly widen a change to make one consistent. An unmet acceptance criterion means writing a feature, not applying a fix; report it and stop.
+- `--fix-all` additionally applies labelled findings. Before applying a `[convention change]`, say which other files the repo-wide fix leaves untouched, so the caller can see the inconsistency they are accepting.
+- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the unlabelled findings to post inline, the diff command from step 1, and the PR or MR number. Labelled findings do not go inline: hand them over separately for the review summary body, marked non-blocking and carrying their label, so they read as candidates for a follow-up ticket rather than as changes requested on the author's diff. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted.
 
 ## Guard rails
 
@@ -131,4 +145,5 @@ Then honour `--fix` or `--comment`:
 - **Never write a ticket reference into a code comment** to resolve an acceptance-criteria finding. Criteria live in the tracker and the PR, not the code.
 - **Do not run builds, typechecks, or test suites** as part of the review. CI covers those.
 - **Do not restructure a component** to satisfy a reactivity finding. Propose the smallest change that fixes the bug; larger reorganisation is a separate task.
+- **Never drop a labelled finding.** A finding held back for scope still gets reported. Suppressing it defeats the point of labelling it.
 - **Never write to the issue tracker.** This skill reads it; it does not comment, edit, or transition.

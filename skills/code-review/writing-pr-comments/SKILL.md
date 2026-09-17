@@ -26,6 +26,15 @@ Write each comment as these parts, in this order. Omit a part only when it genui
 | "happy for this to be a follow-up, it is a bit outside this PR's scope" | Correct but the PR did not cause it |
 | "flagging rather than asking, happy for it to stay" | Judgement call, public API, or style |
 
+A finding that arrives carrying a `[convention change]` or `[out of scope]` label from the `staying-in-scope` skill has already been triaged: it is real, and it does not belong in this PR. Do not post it inline as if it were a change request. Put it in the review summary body instead, with its evidence, and end it on a follow-up signal:
+
+| Label | How to post it |
+|---|---|
+| `[convention change]` | Summary body. Name the prevailing pattern and where it is, then say the real change is repo-wide: "the other query modules key this inline, so changing just this one would split it — worth a separate ticket if we want to move the lot." |
+| `[out of scope]` | Summary body. Say plainly the PR did not cause it: "this predates the branch, flagging it rather than asking you to fix it here." |
+
+Never let a labelled finding read as blocking. The author did not cause it, or cannot fix it alone, and a comment that implies otherwise costs them a round trip to say so.
+
 ## Triage before you post
 
 Sort findings by what they cost a user, and post the ones that earn their place. A comment thread that is nine tenths nitpick trains the author to skim.

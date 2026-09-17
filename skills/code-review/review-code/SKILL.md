@@ -49,6 +49,12 @@ Match each hunk against the repo's documented standards first, then against the 
 
 At `low` or `medium` effort, report only smells you are confident improve the code. At `high` or `max`, include lower-confidence suggestions, clearly marked.
 
+## Scope labels
+
+Load the `staying-in-scope` skill and follow it before you report anything. It decides when a finding is correct but belongs outside this change, and it owns the two labels the caller triages on: `[out of scope]` for a finding this change did not cause, and `[convention change]` for one the repo already does another way. Its prior-art check is not optional for a finding that introduces, renames, or restructures a pattern.
+
+The rule lives there so every pass labels alike. Apply the labels exactly as that skill describes, keep labelled findings in your normal severity ranking, and let the caller separate them. If you cannot load the skill, say so in your report and label nothing rather than inventing a scheme.
+
 ## Output
 
 Two sections, in this order:

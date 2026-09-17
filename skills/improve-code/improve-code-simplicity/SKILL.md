@@ -47,6 +47,14 @@ Make each cut as the reference directs: inline, remove, hard-code, or replace wi
 
 If a test fails, the cut changed behaviour. Revert that cut and list it under "not cut" with the failing test's name.
 
+## Scope labels
+
+Load the `staying-in-scope` skill and follow it before you cut or report anything. A cut can be correct in isolation and still split a convention the rest of the repo follows, and its prior-art check is what tells the two apart.
+
+In **report mode**, label the finding as that skill describes: `[out of scope]` for something this change did not cause, `[convention change]` for a cut the repo's prevailing pattern argues against. In **apply mode**, do not make a `[convention change]` cut. It goes on the "not cut" list with its label and its prior-art citations, alongside the cuts a repo standard or a test protected. A convention change is a decision for the human, not a cut.
+
+If you cannot load the skill, say so and label nothing rather than inventing a scheme.
+
 ## Output
 
 **Apply mode.** A list of cuts, each as `file:line`, what was removed, and the one-line reason (the rule and the evidence: "one caller, at `x.ts:40`"). Then a "not cut" list: things that looked speculative but a repo standard, a test, or the kept-on-purpose list protected, with the reason. Then the test command you ran and its result. No preamble.

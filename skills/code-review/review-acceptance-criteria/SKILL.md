@@ -78,7 +78,10 @@ That fourth verdict exists so you never have to guess. A confident wrong verdict
 
 ## Step 6: note out-of-scope changes
 
-List changes in the diff that no criterion asked for, as **low-severity notes only**. Drive-by fixes, refactors, and added tests are normal and healthy; the point is to surface work that might belong in its own ticket, not to treat it as a defect. Never rank these above an unmet criterion.
+List changes in the diff that no criterion asked for, as **low-severity notes only**.
+
+These are not the `[out of scope]` label the other passes apply, and a caller must not pool the two. You are listing **code the change contains that the ticket did not ask for**; that label marks **a finding the change did not cause**. Opposite directions. Keep yours as notes and do not label them.
+ Drive-by fixes, refactors, and added tests are normal and healthy; the point is to surface work that might belong in its own ticket, not to treat it as a defect. Never rank these above an unmet criterion.
 
 ## Output
 
