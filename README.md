@@ -44,6 +44,7 @@ into place, so pull later changes with `npx skills@latest update`.
 
 | Skill | What it does |
 | --- | --- |
+| [writing-pr-descriptions](./skills/writing/writing-pr-descriptions/SKILL.md) | Writes short PR descriptions that explain why a change exists and why it takes its shape, with a code example where it helps, instead of listing the changes. |
 | [writing-pr-comments](./skills/writing/writing-pr-comments/SKILL.md) | Turns review findings into PR comments an author can act on: the claim, the consequence, how you know, a suggested fix, and an explicit scope signal. |
 | [simplified-technical](./skills/writing/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 

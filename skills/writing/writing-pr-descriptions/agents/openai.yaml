@@ -1,0 +1,3 @@
+interface:
+  display_name: "Writing PR Descriptions"
+  short_description: "Write short PR descriptions that explain intent rather than list changes"
