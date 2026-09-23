@@ -26,7 +26,6 @@ into place, so pull later changes with `npx skills@latest update`.
 | [improve-tests](./skills/improve-code/improve-tests/SKILL.md) | Strengthens existing tests: fixes false confidence and brittleness, adds high-value missing cases at the right level, and verifies the affected targets. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
 | [staying-in-scope](./skills/staying-in-scope/SKILL.md) | Decides whether a change belongs in the work at hand: checks prior art before adopting a pattern, so a local improvement does not silently split a repo-wide convention, and labels review findings that need their own ticket. |
-| [simplified-technical](./skills/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |
 
 ### Code review
@@ -40,7 +39,13 @@ into place, so pull later changes with `npx skills@latest update`.
 | [review-vue](./skills/code-review/review-vue/SKILL.md) | Vue 3 reactivity bugs and watchers that should be a computed, a prop, a v-model, or an event listener. |
 | [review-tanstack-query](./skills/code-review/review-tanstack-query/SKILL.md) | TanStack Query cache and reactivity defects: frozen keys, cache collisions, invalidation that matches nothing, unsafe cache writes. |
 | [review-acceptance-criteria](./skills/code-review/review-acceptance-criteria/SKILL.md) | Checks the diff against the ticket, issue, or spec behind it, and lists out-of-scope changes. |
-| [writing-pr-comments](./skills/code-review/writing-pr-comments/SKILL.md) | Turns review findings into PR comments an author can act on: the claim, the consequence, how you know, a suggested fix, and an explicit scope signal. |
+
+### Writing
+
+| Skill | What it does |
+| --- | --- |
+| [writing-pr-comments](./skills/writing/writing-pr-comments/SKILL.md) | Turns review findings into PR comments an author can act on: the claim, the consequence, how you know, a suggested fix, and an explicit scope signal. |
+| [simplified-technical](./skills/writing/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 
 ## Layout and conventions
 
