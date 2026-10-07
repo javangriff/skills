@@ -59,6 +59,21 @@ For a branch target, use that branch in place of `HEAD`. For a path target, rest
 
 Record the exact diff command you settled on. Every pass receives it verbatim.
 
+### Read the existing discussion
+
+For a PR or MR target, read what has already been said before you start any pass: the description, every review body, every inline thread with its replies, and the conversation comments. An automated reviewer such as Copilot is a reviewer, so its threads count. Bots that only post status (coverage, preview links, test results) do not.
+
+```bash
+gh pr view <n> --json body,reviews --jq '.body, (.reviews[] | "\(.author.login) [\(.state)]: \(.body)")'
+gh api --paginate repos/{owner}/{repo}/pulls/<n>/comments \
+  --jq '.[] | "\(.id) reply-to:\(.in_reply_to_id // "-") \(.user.login) \(.path):\(.line // .original_line)\n\(.body)\n"'
+gh api --paginate repos/{owner}/{repo}/issues/<n>/comments --jq '.[] | "\(.user.login): \(.body)\n"'
+```
+
+On GitLab, `glab mr view <n> --comments` covers the same ground.
+
+Keep the result as the **prior discussion**. Step 4 checks every finding against it. Read it now, not at posting time, because by then a finding may already be in a comment.
+
 ## Step 2: derive the pass inputs
 
 ```bash
@@ -105,7 +120,7 @@ If the harness can run subagents, start every selected pass in **one step** so t
 - for `improve-code-simplicity`: the words "report mode", so it makes no edits
 - for `review-tests`: the changed test-file list; it follows those tests into related production code itself
 - for `review-tanstack-query`: the query module to cross-reference, when you can see one in the diff's directory
-- for `review-acceptance-criteria`: the issue you fetched (or the reason you could not), plus the branch, PR title, head branch, and last commit subject
+- for `review-acceptance-criteria`: the issue you fetched (or the reason you could not), plus the branch, PR title, head branch, last commit subject, and the PR description
 
 If the harness has no subagents, run the passes in sequence yourself by calling the Skill tool with each pass's name and the same inputs, and collect each result before starting the next.
 
@@ -123,7 +138,7 @@ Wait for every pass, then produce **one** report in this order.
 1. **Acceptance criteria.** The verdict table exactly as the pass returned it, first, because "this does not do what was asked" outranks any code finding. This section is never ranked against or merged with code findings; a change can pass one and fail the other. If the pass was skipped, one line saying why (no tracker config, no spec found).
 2. **Findings.** Every **unlabelled** finding from every code pass, in a single list ordered by severity, not grouped by pass. Bugs and hard findings first, then judgement calls. Each finding is the claim, the failure scenario or smell, and the fix, with `file:line`.
 3. **Follow-up findings — not actioned.** Every finding a pass labelled, each keeping its label, its evidence, and its one-line statement of what a consistent fix would touch. These are real findings held back for a scope decision, not rejected ones, so never merge them into the list above and never drop them for being labelled. Order `[convention change]` before `[out of scope]`, since the first is a decision about the codebase and the second is a decision about a ticket. Close the section with one line telling the caller their options: action them now, or raise them as follow-ups.
-4. **Notes.** Skipped passes and why, criteria that could not be verified, and the acceptance-criteria pass's own out-of-scope notes.
+4. **Notes.** Skipped passes and why, criteria that could not be verified, the acceptance-criteria pass's own out-of-scope notes, and the findings you dropped or reframed against the prior discussion.
 
 The acceptance-criteria pass's out-of-scope notes are a different thing from an `[out of scope]` label, and the two must not be pooled. That pass lists **code the change contains that no criterion asked for**; the label marks **a finding the change did not cause**. They point in opposite directions, so leave the pass's notes where they are, in Notes.
 
@@ -133,11 +148,21 @@ Deduplicate: when two passes flag the same line, keep the more specific write-up
 
 A labelled finding survives deduplication. When one pass labels a finding and another reports the same line unlabelled, keep the label and the more specific write-up: the pass that labelled it did the prior-art check, and the one that did not has no evidence against it.
 
+### Reconcile with the prior discussion
+
+For a PR or MR target, check each finding against the prior discussion from step 1 before you report it:
+
+- **Another reviewer already raised it, and the thread is open.** Drop it. If it adds something the thread lacks, such as a failure scenario or a wider reach, keep only that part and mark it as a reply to that thread, with the comment id.
+- **It was raised and resolved,** by a fix in a later commit or by an answer from the author. Drop it. If the fix is incomplete, keep only the part that is still missing and mark it as a reply to that thread.
+- **The author documented it** as a known gap or a deliberate trade-off, in the description or in a comment. Do not report it as news. Start from what the author said, add only what they did not cover, and set its severity in that light. If nothing is left, drop it.
+
+List every finding you dropped or reframed in Notes, each with the comment or description text that caused it. If you drop a finding and do not list it, it reads as a finding the passes missed.
+
 Then honour `--fix` or `--comment`:
 
 - `--fix` applies **unlabelled code findings only**. After applying, print the held-back findings with their labels and one line saying they were held back for a scope decision and that `--fix-all` would apply them. Never apply a labelled finding under plain `--fix`, and never quietly widen a change to make one consistent. An unmet acceptance criterion means writing a feature, not applying a fix; report it and stop.
 - `--fix-all` additionally applies labelled findings. Before applying a `[convention change]`, say which other files the repo-wide fix leaves untouched, so the caller can see the inconsistency they are accepting.
-- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the unlabelled findings to post inline, the diff command from step 1, and the PR or MR number. Labelled findings do not go inline: hand them over separately for the review summary body, marked non-blocking and carrying their label, so they read as candidates for a follow-up ticket rather than as changes requested on the author's diff. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted.
+- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the unlabelled findings to post inline, the diff command from step 1, and the PR or MR number. Labelled findings do not go inline: hand them over separately for the review summary body, marked non-blocking and carrying their label, so they read as candidates for a follow-up ticket rather than as changes requested on the author's diff. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted. A finding marked as a reply goes to its existing thread, not to a new inline comment.
 
 ## Guard rails
 
