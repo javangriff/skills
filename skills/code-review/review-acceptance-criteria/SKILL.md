@@ -1,6 +1,6 @@
 ---
 name: review-acceptance-criteria
-description: Use when the question is whether a change does what its ticket, issue, or spec asked for, rather than whether the code is well written. Triggers include a branch or PR carrying a ticket key or issue number, the user asking "does this satisfy the ticket", "check against the AC", "did we miss a requirement", or "is anything out of scope". Also run by the review skill on every diff; it skips itself when no ticket or spec can be found.
+description: Checks a diff against the ticket, issue, or spec behind it and gives a verdict on each acceptance criterion. Use when the question is whether a change does what its ticket, issue, or spec asked for, rather than whether the code is well written. Triggers include a branch or PR carrying a ticket key or issue number, the user asking "does this satisfy the ticket", "check against the AC", "did we miss a requirement", or "is anything out of scope". Also run by the review skill on every diff; it skips itself when no ticket or spec can be found.
 ---
 
 # Review: acceptance criteria
@@ -81,7 +81,8 @@ That fourth verdict exists so you never have to guess. A confident wrong verdict
 List changes in the diff that no criterion asked for, as **low-severity notes only**.
 
 These are not the `[out of scope]` label the other passes apply, and a caller must not pool the two. You are listing **code the change contains that the ticket did not ask for**; that label marks **a finding the change did not cause**. Opposite directions. Keep yours as notes and do not label them.
- Drive-by fixes, refactors, and added tests are normal and healthy; the point is to surface work that might belong in its own ticket, not to treat it as a defect. Never rank these above an unmet criterion.
+
+Drive-by fixes, refactors, and added tests are normal and healthy; the point is to surface work that might belong in its own ticket, not to treat it as a defect. Never rank these above an unmet criterion.
 
 ## Output
 

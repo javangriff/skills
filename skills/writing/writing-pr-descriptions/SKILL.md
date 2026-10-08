@@ -1,6 +1,6 @@
 ---
 name: writing-pr-descriptions
-description: Use when writing, drafting, or rewriting the description (body) of a pull request or merge request, including when opening a PR with `gh pr create` or `glab mr create`. Triggers include "open a PR", "raise a PR", "write the PR description", "draft the PR body", "update the PR description", "tidy up this PR description", and a PR body that reads like a changelog or a list of files touched.
+description: Writes short pull request descriptions that explain why a change exists and why it takes its shape, instead of listing what changed. Use when writing, drafting, or rewriting the description (body) of a pull request or merge request, including when opening a PR with `gh pr create` or `glab mr create`. Triggers include "open a PR", "raise a PR", "write the PR description", "draft the PR body", "update the PR description", "tidy up this PR description", and a PR body that reads like a changelog or a list of files touched.
 ---
 
 # Writing PR Descriptions

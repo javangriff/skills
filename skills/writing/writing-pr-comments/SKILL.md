@@ -1,6 +1,6 @@
 ---
 name: writing-pr-comments
-description: Use when writing or posting comments on a pull request or merge request, whether inline on a line, as a review summary, or as a reply to someone else's comment. Triggers include "post these as PR comments", "comment on the PR", "leave a review", "add a comment to the PR", "--comment", turning review findings into comments, and replying to reviewer feedback. Also used by the review skill when it is asked to post its findings rather than print them.
+description: Writes pull request comments an author can act on (the claim, the consequence, how it is known, a suggested fix, and an explicit scope signal) and replies to reviewer feedback. Use when writing or posting comments on a pull request or merge request, whether inline on a line, as a review summary, or as a reply to someone else's comment. Triggers include "post these as PR comments", "comment on the PR", "leave a review", "add a comment to the PR", "--comment", turning review findings into comments, and replying to reviewer feedback. Also used by the review skill when it is asked to post its findings rather than print them.
 ---
 
 # Writing PR Comments

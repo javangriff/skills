@@ -1,6 +1,6 @@
 ---
 name: staying-in-scope
-description: Use before introducing, proposing, or reporting a change to how something is done, to decide whether it belongs in the current piece of work at all. Triggers include being about to restructure, rename, extract, or adopt a new pattern; planning work that touches code the ticket did not ask for; a review finding about code the diff did not author; and any point where a local improvement might split a convention the rest of the repo follows. Loaded by the review passes so the scoping rule has one home.
+description: Decides whether a change belongs in the current piece of work, by checking the repo's prior art for the pattern and whether the work caused the issue, and labels review findings that belong elsewhere. Use before introducing, proposing, or reporting a change to how something is done. Triggers include being about to restructure, rename, extract, or adopt a new pattern; planning work that touches code the ticket did not ask for; a review finding about code the diff did not author; and any point where a local improvement might split a convention the rest of the repo follows. Loaded by the review passes so the scoping rule has one home.
 ---
 
 # Staying in scope

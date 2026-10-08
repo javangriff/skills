@@ -1,6 +1,6 @@
 ---
 name: review-typescript
-description: Use when reviewing a diff that touches TypeScript and you want a type-level pass the compiler cannot give. Triggers include changed .ts, .tsx, .mts, or .cts files, Vue or Svelte components with lang="ts", or the user mentioning casts, "as any", non-null assertions, exhaustiveness, unions, generics, floating promises, or "the types say one thing and the code does another". Also run by the review skill for every TypeScript file in a diff.
+description: Reviews TypeScript for type-level defects the compiler accepts, such as lying casts, any leakage, non-exhaustive unions, floating promises, and misleading signatures. Use when reviewing a diff that touches TypeScript. Triggers include changed .ts, .tsx, .mts, or .cts files, Vue or Svelte components with lang="ts", or the user mentioning casts, "as any", non-null assertions, exhaustiveness, unions, generics, floating promises, or "the types say one thing and the code does another". Also run by the review skill for every TypeScript file in a diff.
 ---
 
 # Review: TypeScript
@@ -37,9 +37,9 @@ Ignore anything on lines the diff did not touch, unless a changed line depends o
 
 ## Scope labels
 
-Load the `staying-in-scope` skill and follow it before you report anything. It decides when a finding is correct but belongs outside this change, and it owns the two labels the caller triages on: `[out of scope]` for a finding this change did not cause, and `[convention change]` for one the repo already does another way. Its prior-art check is not optional for a finding that introduces, renames, or restructures a pattern.
+Call the Skill tool with `staying-in-scope` and follow it before you report anything. It decides when a finding is correct but belongs outside this change, and it owns the two labels the caller triages on: `[out of scope]` for a finding this change did not cause, and `[convention change]` for one the repo already does another way. Its prior-art check is not optional for a finding that introduces, renames, or restructures a pattern.
 
-The rule lives there so every pass labels alike. Apply the labels exactly as that skill describes, keep labelled findings in your normal severity ranking, and let the caller separate them. If you cannot load the skill, say so in your report and label nothing rather than inventing a scheme.
+Apply the labels exactly as that skill describes, keep labelled findings in your normal severity ranking, and let the caller separate them. If you cannot load the skill, say so in your report and label nothing rather than inventing a scheme.
 
 ## Output
 

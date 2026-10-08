@@ -4,6 +4,8 @@ Concrete patterns for the Playwright MCP tools. Most adversarial states (errors,
 races, server transitions) are unreachable by clicking alone — you reach them by
 intercepting the network with `page.route()` inside `browser_run_code_unsafe`.
 
+Every `browser_*` tool named here belongs to the **Playwright MCP server**. Harnesses prefix MCP tools with their server's name (`playwright:browser_navigate`, `mcp__playwright__browser_navigate`, or similar); call the tool under the Playwright server's prefix, not a same-named tool from another browser server.
+
 ## Table of contents
 
 - [The core tool: `browser_run_code_unsafe`](#the-core-tool)
@@ -217,7 +219,7 @@ previous test don't leak in.
 
 ## Tool cheat sheet
 
-| Need | Tool |
+| Need | Playwright MCP tool |
 | --- | --- |
 | Set up mocks, delays, multi-step flows, return evidence | `browser_run_code_unsafe` |
 | Go to a URL | `browser_navigate` |
@@ -228,5 +230,5 @@ previous test don't leak in.
 | Inspect/triage network calls | `browser_network_requests` |
 | Test mobile layout | `browser_resize` |
 
-Note: you may need to load these tools via ToolSearch (`select:<name>`) before the
-first call if they aren't already in context.
+Some harnesses defer MCP tool schemas until asked. If a tool above is not
+callable yet, load it through the harness's tool search before the first call.

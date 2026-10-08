@@ -6,6 +6,15 @@ The examples are written for the Vue adapter. Rules A1, A3, A4, and A6 are adapt
 
 Distilled from the [Vue guides](https://tanstack.com/query/latest/docs/framework/vue/guides/). Most real defects here are **reactivity** defects: an option that was captured as a plain value at setup time and therefore never changes again. The query looks correct, fetches once, and then quietly serves the wrong data forever.
 
+## Contents
+
+- A. Reactivity: frozen keys, unkeyed variables, non-reactive `enabled`, destructured options, setup-time calls, returned refs
+- B. Cache correctness: key collisions, unstable keys, invalidation prefixes, invalidation promises, immutable `setQueryData`, optimistic updates
+- C. Defaults that surprise people
+- D. v5 migration leftovers
+- E. Query function hygiene
+- F. Not worth flagging
+
 ---
 
 ## A. Reactivity — the highest-value checks

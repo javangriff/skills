@@ -1,6 +1,6 @@
 ---
 name: improve-code-docs
-description: Audit and improve in-code documentation for TypeScript, JavaScript, and Vue files — add proper JSDoc to functions that lack it, fix JSDoc that has drifted from the signature, and tighten verbose or redundant comments. Use this whenever the user wants to document functions, add or fix JSDoc/doc comments, "clean up the comments", make comments less verbose, remove noise comments, or do a documentation pass before pushing a PR. Reach for it even when they only vaguely say a file "needs better comments", "isn't documented", or "has too many useless comments" — and default to the files a branch/PR changed when no path is given.
+description: Audits and improves in-code documentation in TypeScript, JavaScript, and Vue files, adding JSDoc to functions that lack it, fixing JSDoc that has drifted from the signature, and cutting comments that restate the code. Use when the user wants to document functions, add or fix JSDoc or doc comments, "clean up the comments", make comments less verbose, or do a documentation pass before pushing a PR, including vague asks such as a file that "needs better comments", "isn't documented", or "has too many useless comments". Defaults to the files a branch or PR changed when no path is given.
 ---
 
 # Improve code documentation
@@ -16,9 +16,10 @@ This is a judgment task, not a mechanical sweep. The rules below tell you what "
 Default to the files the current change touches — that's almost always what someone means by "do a doc pass". Use an explicit path/dir if the user names one.
 
 ```bash
-git diff --name-only                       # unstaged working-tree changes
-git diff --cached --name-only              # staged changes
-git diff --name-only main...HEAD           # everything this branch changed vs main
+base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)
+git diff --name-only "$base"...HEAD           # everything this branch changed
+git diff --name-only HEAD                     # staged and unstaged work
+git ls-files --others --exclude-standard      # new files
 ```
 
 Filter to source files (`*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.vue`). Skip generated files (`*.generated.*`, `dist/`), config, and test files unless asked — tests are usually self-describing through their `describe`/`test` names, and over-documenting them adds noise.
@@ -128,27 +129,6 @@ For `.vue` files, work inside `<script setup>` (or the script block):
 
 ### 7. Verify
 
-Documentation edits are low-risk, but a `@param` whose name no longer matches the signature, or a stray syntax slip in a block comment, can trip lint or type checks. After editing, run the project's checks on the affected projects and report results honestly:
-
-```bash
-# Nx monorepo (this is what most of the user's work uses):
-nx typecheck <project>
-nx lint <project>
-
-# Generic fallback when there's no Nx:
-npx tsc --noEmit       # or the project's typecheck script
-npx eslint <files>
-```
+Documentation edits are low-risk, but a `@param` whose name no longer matches the signature, or a stray syntax slip in a block comment, can trip lint or type checks. After editing, run the repo's own typecheck and lint commands (`package.json` scripts, an Nx or Turbo target, or `npx tsc --noEmit` and `npx eslint <files>` when there is nothing else) on the affected files, and report the results honestly.
 
 If you changed JSDoc `@param` names, double-check they still match the parameter names — that's the most common way a doc pass breaks lint.
-
-## Summary of the bar
-
-- **Documenting a function:** verb-led summary + terse-but-descriptive `@param`/`@returns` (no redundant TS types, no padding prose). Terse means no filler — not stripping the description down to a vague noun.
-- **Decluttering comments:** a crisp summary line per function and the noise gone — don't add `@param`/`@returns` scaffolding the caller didn't ask for.
-- Trivial one-liners: a single summary line, no forced tags.
-- Inline comments: explain *why*; delete anything that restates the code; shorten the rest; never delete a 'why' just because it sits next to the line it explains.
-- Match the file's existing formatting and doc style — never impose your own.
-- Scope to what the change touched; verify with typecheck + lint before claiming done.
-
-The win condition is a diff that's **net cleaner**: more of the right documentation, less of the wrong kind.

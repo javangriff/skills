@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use whenever the user asks to review code: the current diff, a PR, a branch, or a path. Triggers include "review my changes", "review this PR", "check my branch before I push", "pre-push review", "does this do what the ticket says", and any mention of reactivity, watchers, query keys, caching, casts, or acceptance criteria in the context of a change. Prefer this over any single review pass, since it selects and runs the right passes for what the diff touches.
+description: Orchestrates a full code review, picking the review passes that match what a diff touches, running them together, and merging one report. Use whenever the user asks to review code: the current diff, a PR, a branch, or a path. Triggers include "review my changes", "review this PR", "check my branch before I push", "pre-push review", "does this do what the ticket says", and any mention of reactivity, watchers, query keys, caching, casts, or acceptance criteria in the context of a change. Prefer this over any single review pass.
 ---
 
 # Review
@@ -38,6 +38,22 @@ All optional:
 - `--fix`: apply unlabelled code findings to the working tree after the review. Labelled findings are held back for triage.
 - `--fix-all`: as `--fix`, but also applies labelled findings. Only use it when the caller asked for it by name.
 - `--comment`: post findings as inline comments on the PR or MR.
+
+## Progress
+
+Copy this checklist and tick it off as you go. Each line is a step below; skipping one is how a review silently loses a pass or a ticket.
+
+```
+Review progress:
+- [ ] 1. Base resolved and diff non-empty; diff command recorded
+- [ ] 1. PR/MR target only: prior discussion read
+- [ ] 2. Pass inputs derived; skipped passes noted
+- [ ] 2. Ticket fetched, or the reason it could not be
+- [ ] 3. Every selected pass dispatched with its inputs
+- [ ] 4. All passes returned; findings merged and deduplicated
+- [ ] 4. PR/MR target only: findings reconciled with the prior discussion
+- [ ] 4. --fix / --fix-all / --comment honoured, if given
+```
 
 ## Step 1: pin and validate the fixed point
 
@@ -162,7 +178,7 @@ Then honour `--fix` or `--comment`:
 
 - `--fix` applies **unlabelled code findings only**. After applying, print the held-back findings with their labels and one line saying they were held back for a scope decision and that `--fix-all` would apply them. Never apply a labelled finding under plain `--fix`, and never quietly widen a change to make one consistent. An unmet acceptance criterion means writing a feature, not applying a fix; report it and stop.
 - `--fix-all` additionally applies labelled findings. Before applying a `[convention change]`, say which other files the repo-wide fix leaves untouched, so the caller can see the inconsistency they are accepting.
-- `--comment` posts the findings on the PR or MR. Load the `writing-pr-comments` skill and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the unlabelled findings to post inline, the diff command from step 1, and the PR or MR number. Labelled findings do not go inline: hand them over separately for the review summary body, marked non-blocking and carrying their label, so they read as candidates for a follow-up ticket rather than as changes requested on the author's diff. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted. A finding marked as a reply goes to its existing thread, not to a new inline comment.
+- `--comment` posts the findings on the PR or MR. Call the Skill tool with `writing-pr-comments` and follow it: it owns how a comment is shaped, triaged, and anchored, so that method has one home and cannot drift from this file. Give it the unlabelled findings to post inline, the diff command from step 1, and the PR or MR number. Labelled findings do not go inline: hand them over separately for the review summary body, marked non-blocking and carrying their label, so they read as candidates for a follow-up ticket rather than as changes requested on the author's diff. Each finding carries its provenance across, since a pass that observed a failure and a pass that inferred one from the diff must not read alike once posted. A finding marked as a reply goes to its existing thread, not to a new inline comment.
 
 ## Guard rails
 

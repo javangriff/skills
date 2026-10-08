@@ -1,6 +1,6 @@
 ---
 name: improve-code-simplicity
-description: Use after writing or changing code and before committing it, to cut the change down to the least code that does the job. Triggers include finishing an implementation, "simplify this", "trim this down", "apply YAGNI", "is any of this unnecessary", or code that feels over-engineered, over-abstracted, or padded with options nobody uses. Also run by the review skill in report mode as its simplicity pass.
+description: Cuts a change down to the least code that does the job, removing one-caller abstractions, options nothing sets, unreachable branches, and reimplemented utilities. Use after writing or changing code and before committing it. Triggers include finishing an implementation, "simplify this", "trim this down", "apply YAGNI", "is any of this unnecessary", or code that feels over-engineered, over-abstracted, or padded with options nobody uses. Also run by the review skill in report mode as its simplicity pass.
 ---
 
 # Improve code simplicity
@@ -49,7 +49,7 @@ If a test fails, the cut changed behaviour. Revert that cut and list it under "n
 
 ## Scope labels
 
-Load the `staying-in-scope` skill and follow it before you cut or report anything. A cut can be correct in isolation and still split a convention the rest of the repo follows, and its prior-art check is what tells the two apart.
+Call the Skill tool with `staying-in-scope` and follow it before you cut or report anything. A cut can be correct in isolation and still split a convention the rest of the repo follows, and its prior-art check is what tells the two apart.
 
 In **report mode**, label the finding as that skill describes: `[out of scope]` for something this change did not cause, `[convention change]` for a cut the repo's prevailing pattern argues against. In **apply mode**, do not make a `[convention change]` cut. It goes on the "not cut" list with its label and its prior-art citations, alongside the cuts a repo standard or a test protected. A convention change is a decision for the human, not a cut.
 

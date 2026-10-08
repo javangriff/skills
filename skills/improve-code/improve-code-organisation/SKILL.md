@@ -1,11 +1,11 @@
 ---
 name: improve-code-organisation
-description: Reorganise a Vue 3 `<script setup>` component so its code reads by logical concern instead of by option/API type. Use when a component feels hard to follow, has refs/computeds/watchers/handlers for unrelated features interleaved, mixes concerns in one file, or when the user asks to "improve code organisation", "tidy up this component", "clean up the script", "group related logic", or "extract a composable". Reach for this whenever a Vue component's `<script setup>` is long, scattered, or hard to scan — even if the user only vaguely says it "needs a cleanup".
+description: Reorganises a Vue 3 script setup component so its code reads by logical concern instead of by option/API type. Use when a component feels hard to follow, has refs/computeds/watchers/handlers for unrelated features interleaved, mixes concerns in one file, or when the user asks to "improve code organisation", "tidy up this component", "clean up the script", "group related logic", or "extract a composable". Reach for this whenever a Vue component's script setup block is long, scattered, or hard to scan — even if the user only vaguely says it "needs a cleanup".
 ---
 
 # Improve Code Organisation (Vue 3 Composition API)
 
-Reorganise a Vue 3 `<script setup>` component so the code is grouped by **logical concern**, not scattered by API type. This is the core lesson of the [Composition API FAQ](https://vuejs.org/guide/extras/composition-api-faq): the Options API forced you to split one feature's `data`, `computed`, `methods`, and `watch` across separate blocks; Composition API lets you keep everything for one concern together. The win is that someone can read top-to-bottom and follow a feature without scrolling between sections.
+Reorganise a Vue 3 `<script setup>` component so the code is grouped by **logical concern**, not scattered by API type. The win is that someone can read top-to-bottom and follow a feature without scrolling between sections.
 
 This skill is **behaviour-preserving**. You are moving and grouping code, optionally lifting a concern into a composable — never changing what the component does. The template, props, emits, and runtime behaviour stay identical.
 
@@ -13,7 +13,7 @@ This skill is **behaviour-preserving**. You are moving and grouping code, option
 
 Default to organising **in place**. Extracting into a `use*.ts` composable is only worth it when the logic is genuinely reusable, or a concern is large and self-contained enough that lifting it out makes the component meaningfully easier to read. Creating a new file for one-off logic just adds indirection. **Always ask the user before creating a new composable file** — propose it, explain why, and let them decide.
 
-If the component is still Options API (has `export default { data() {...} }`), this skill does not apply — point the user at `refactor-to-script-setup` / `refactor-to-setup-method` first, then come back.
+If the component is still Options API (has `export default { data() {...} }`), this skill does not apply. Say so, and suggest migrating it to `<script setup>` first.
 
 ## Process
 
@@ -58,7 +58,7 @@ Don't add section-header comments to mark the boundaries. Well-grouped code show
 
 ### 4. Extract a composable only when it earns it (ask first)
 
-If a concern is reusable or large/self-contained, propose lifting it into a composable. Conventions in this repo:
+If a concern is reusable or large/self-contained, propose lifting it into a composable. Follow where the repo already keeps composables; absent a convention:
 
 - File: `useThing.ts`, co-located with the component (or in a shared `composables/` dir if reused across components)
 - Exported function `useThing(...)` returns an object of the refs/computeds/functions the component needs
@@ -89,25 +89,17 @@ const { selectedIds, hasSelection, toggleRow } = useRowSelection()
 
 ### 5. Verify nothing changed
 
-Behaviour preservation is the whole contract, so prove it:
+Behaviour preservation is the whole contract, so prove it. Find the repo's own typecheck, unit-test, and lint commands (`package.json` scripts, an Nx or Turbo target, the CI config) and run them on the affected project:
 
-- `nx typecheck <project>` — types still resolve (catches a missed import or a binding the template relies on)
-- `nx test:unit <project> -- <path/to/Component.test.ts>` — existing tests still pass
-- `nx lint <project>` — no new lint issues (the repo bans `eslint-disable` without permission)
-- Re-read the template: every binding it uses must still be defined and exported from `<script setup>`
+- Typecheck: types still resolve, which catches a missed import or a binding the template relies on.
+- Unit tests for the component: existing tests still pass.
+- Lint: no new issues. Never suppress a rule to get there.
+- Re-read the template: every binding it uses must still be defined in `<script setup>`.
 
 Report what you ran and the result. If you extracted a composable, mention the new file and why it earned its place.
 
-## Principles to apply (from the FAQ)
+## Guard rails
 
-- **By concern, not by type.** "Code dealing with the same logical concern can now be grouped together — we no longer need to jump between different options blocks." That sentence is the entire point of this skill.
-- **Normal JS best practices apply.** Composition API removes the Options API "guard rails", so ordinary code-organisation judgement is yours to apply: cohesion, small focused functions, meaningful names.
-- **Reuse is a benefit, not an obligation.** Composables are the mechanism for reuse — use them when there's reuse (or clarity) to be had, not reflexively.
-- **Don't fight the framework.** Keep `defineProps`/`defineEmits` at the top, keep template bindings intact, preserve reactivity (don't destructure reactive objects in a way that drops reactivity).
-
-## Repo specifics (Vue 3 + Nx + Tailwind)
-
-- Components are `<script setup lang="ts">`, no `<style>` blocks (Tailwind `tw:` classes inline).
-- Server state is TanStack Query, client state is Pinia or Vuex — a "fetching" concern is usually a `useQuery`; don't reshuffle it into ad-hoc refs.
-- Run checks via `nx` (`nx typecheck|test:unit|lint <project>`), not the underlying tools directly.
-- No semicolons, single quotes, 120-col lines — match the surrounding file.
+- **Preserve reactivity across a move.** Do not destructure a `reactive()` object or a composable's return in a way that drops reactivity.
+- **Leave server state where it is.** A fetching concern built on a query library (`useQuery` and friends) stays one; do not reshuffle it into ad-hoc refs.
+- **Match the file's formatting.** Semicolons, quotes, and line width follow the surrounding code and the repo's formatter.

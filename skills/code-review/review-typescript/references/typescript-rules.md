@@ -4,6 +4,17 @@ Type-level defects the compiler accepts but that lie to the reader or leak unsaf
 
 The compiler is the first reviewer. Read `tsconfig.json` before you start: with `strict` on, several of these are partly caught already, and your job is the remainder. With `strict` off, note that once at the top of your report and do not repeat it per finding.
 
+## Contents
+
+- A. Assertions that lie: unrelated `as` casts, non-null assertions, missing `as const` / `satisfies`
+- B. `any` leakage: untyped boundaries, `any` in generics, `@ts-ignore`
+- C. Narrowing that does not narrow: non-exhaustive unions, `Object.keys` / `in` / `includes`, optional discriminants
+- D. Promises and async: floating promises, misplaced `await`, `async` callbacks where `void` is expected, sequential independent awaits
+- E. Signatures that mislead: wide return types, "sometimes required" optionals, `enum`, index signatures, `Function` / `object`
+- F. Shared mutable state: exported `let`, mutated parameters, missing `readonly`
+- G. Tests: casts and `any` that hide real failures
+- Not worth flagging
+
 ## A. Assertions that lie
 
 ### A1. `as` casts across unrelated or wider types

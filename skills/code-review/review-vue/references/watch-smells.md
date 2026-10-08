@@ -6,6 +6,22 @@ The question to ask each one: **is this synchronising, or is this reacting?** Sy
 
 Report each finding with the concrete replacement code, not just the category name.
 
+## Contents
+
+1. Mirroring a prop into a local ref
+2. Deriving a value imperatively
+3. Watching state a child component already emits
+4. Watching something a parent should have passed as a prop
+5. Watching the route or query params
+6. A watcher wrapping a data fetch
+7. Watching a non-reactive source
+8. `deep: true` used as a blunt instrument
+9. A watcher that mutates its own source
+10. Async watchers with no cleanup
+11. `watchEffect` where `watch` was meant
+12. Watchers that should be lifecycle hooks
+- When a watcher **is** correct
+
 ## 1. Mirroring a prop into a local ref
 
 ```js

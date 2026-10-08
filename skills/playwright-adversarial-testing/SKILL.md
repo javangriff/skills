@@ -18,11 +18,27 @@ You are the only reviewer who actually *runs* the thing. A clean demo proves the
 
 ## Workflow
 
+The browser tools named below (`browser_navigate`, `browser_snapshot`, and the rest) are the **Playwright MCP server's** tools. Call them under that server's prefix in your harness, not a same-named tool from another browser server.
+
+Copy this checklist and tick it off as you go:
+
+```
+Adversarial test progress:
+- [ ] 1. Scope: read every changed file, list states, inputs, async actions
+- [ ] 2. App running, port read from the log
+- [ ] 3. Every state renders (mock the backend where needed)
+- [ ] 4. Adversarial probes the change points at
+- [ ] 5. Console and network triaged: change errors vs ambient noise
+- [ ] 6. Report written
+- [ ] 7. Dev server killed, artifacts removed
+```
+
 ### 1. Establish scope — what actually changed
 
 ```bash
-git log --oneline main..HEAD          # commits on the branch
-git diff main...HEAD --stat            # files touched (three dots = vs merge-base)
+base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)
+git log --oneline "$base"..HEAD        # commits on the branch
+git diff "$base"...HEAD --stat         # files touched
 ```
 
 Read **every** changed component, page, query, and mutation. You can't adversarially test what you don't understand. As you read, build a mental (or written) list of:
@@ -33,13 +49,17 @@ Read **every** changed component, page, query, and mutation. You can't adversari
 
 ### 2. Get the app running
 
-Start the dev server in the background and read the port from its log — don't assume it (Vite picks the next free port, so it drifts between runs):
+If the repo or harness has its own skill for launching the app, use its launch recipe. Otherwise find the dev command (`package.json` scripts, an Nx or Turbo target), start it in the background, and read the port from its log — don't assume it (Vite picks the next free port, so it drifts between runs). Poll for the port rather than sleeping a fixed time, since startup time varies by machine and cache state:
 
 ```bash
-(nx dev <app> > /tmp/app-dev.log 2>&1 &) ; sleep 14 ; grep -oE "localhost:[0-9]+" /tmp/app-dev.log | head -1
+log=$(mktemp)
+(<dev command, e.g. nx dev app or npm run dev> > "$log" 2>&1 &)
+for _ in $(seq 60); do                # give up after about a minute
+  port=$(grep -oE 'localhost:[0-9]+' "$log" | head -1) && [ -n "$port" ] && break
+  sleep 1
+done
+echo "${port:-no port found, see $log}"
 ```
-
-(Substitute the repo's real launch command if it isn't Nx. Check `.claude/skills/` for a `run-*`/`verifier-*` skill first — if one exists, use its launch recipe.)
 
 ### 3. Verify each state renders
 
@@ -68,7 +88,7 @@ Lead with a verdict, then steps, then findings ordered by severity. For each rea
 
 ### 7. Clean up
 
-Kill the dev server (`pkill -f "<app> dev"`), remove screenshot artifacts you created, and note any leftover (e.g. `.playwright-mcp/`). Leave the working tree as you found it.
+Kill the dev server you started (`pkill -f` on its command), remove screenshot artifacts you created, and note any leftover (e.g. `.playwright-mcp/`). Leave the working tree as you found it.
 
 ## A note on fixing
 

@@ -1,6 +1,6 @@
 ---
 name: review-vue
-description: Use when reviewing a diff that touches Vue 3 components and you want a reactivity-specific pass. Triggers include a changed .vue file, or the user mentioning reactivity, refs, computeds, watchers, "unnecessary watch", lost reactivity, destructured props, or a template rendering "[object Object]". Also run by the review skill for every changed .vue file.
+description: Reviews Vue 3 components for reactivity bugs and for watchers that should be a computed, a prop, a v-model, or an event listener. Use when reviewing a diff that touches Vue 3 components. Triggers include a changed .vue file, or the user mentioning reactivity, refs, computeds, watchers, "unnecessary watch", lost reactivity, destructured props, or a template rendering "[object Object]". Also run by the review skill for every changed .vue file.
 ---
 
 # Review: Vue reactivity
@@ -35,9 +35,9 @@ Ignore anything on lines the diff did not touch, unless a changed line depends o
 
 ## Scope labels
 
-Load the `staying-in-scope` skill and follow it before you report anything. It decides when a finding is correct but belongs outside this change, and it owns the two labels the caller triages on: `[out of scope]` for a finding this change did not cause, and `[convention change]` for one the repo already does another way. Its prior-art check is not optional for a finding that introduces, renames, or restructures a pattern.
+Call the Skill tool with `staying-in-scope` and follow it before you report anything. It decides when a finding is correct but belongs outside this change, and it owns the two labels the caller triages on: `[out of scope]` for a finding this change did not cause, and `[convention change]` for one the repo already does another way. Its prior-art check is not optional for a finding that introduces, renames, or restructures a pattern.
 
-The rule lives there so every pass labels alike. Apply the labels exactly as that skill describes, keep labelled findings in your normal severity ranking, and let the caller separate them. If you cannot load the skill, say so in your report and label nothing rather than inventing a scheme.
+Apply the labels exactly as that skill describes, keep labelled findings in your normal severity ranking, and let the caller separate them. If you cannot load the skill, say so in your report and label nothing rather than inventing a scheme.
 
 ## Output
 

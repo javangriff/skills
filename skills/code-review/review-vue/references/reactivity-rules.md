@@ -2,6 +2,20 @@
 
 Distilled from [Reactivity Fundamentals](https://vuejs.org/guide/essentials/reactivity-fundamentals.html). Each rule below is a thing to look for in a diff, with the runtime symptom it produces. Fetch the page only if you need detail beyond what is here.
 
+## Contents
+
+1. `reactive()` loses the connection on destructure
+2. `reactive()` breaks when the whole object is replaced
+3. `reactive()` cannot hold primitives
+4. Refs do not unwrap inside reactive arrays or collections
+5. Assigning a new ref over an unwrapped ref property severs the original
+6. Templates only unwrap top-level refs
+7. The proxy is not the raw object
+8. State is deeply reactive by default
+9. DOM updates are asynchronous
+10. Props are reactive; destructured props may not be
+11. Prefer `ref()` over `reactive()`
+
 ## 1. `reactive()` loses the connection on destructure
 
 `reactive()` tracks over property access, so pulling a primitive property out into a local variable — or passing it into a function — hands over a plain value with no link back.
