@@ -20,10 +20,6 @@ into place, so pull later changes with `npx skills@latest update`.
 | Skill | What it does |
 | --- | --- |
 | [grill-me](./skills/grill-me/SKILL.md) | Interviews you relentlessly about a plan or design until every branch of the decision tree is resolved. |
-| [improve-code-docs](./skills/improve-code/improve-code-docs/SKILL.md) | Documentation pass over TypeScript, JavaScript, and Vue files: adds missing JSDoc, fixes docs that drifted from the signature, and cuts comments that restate the code. |
-| [improve-code-organisation](./skills/improve-code/improve-code-organisation/SKILL.md) | Reorganises a Vue 3 `<script setup>` component so it reads by logical concern instead of by API type. |
-| [improve-code-simplicity](./skills/improve-code/improve-code-simplicity/SKILL.md) | Adversarial pass over a change that cuts what nothing present needs: one-caller abstractions, options nobody sets, unreachable branches, premature extensibility. Also the review skill's simplicity pass. |
-| [improve-tests](./skills/improve-code/improve-tests/SKILL.md) | Strengthens existing tests: fixes false confidence and brittleness, adds high-value missing cases at the right level, and verifies the affected targets. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
 | [staying-in-scope](./skills/staying-in-scope/SKILL.md) | Decides whether a change belongs in the work at hand: checks prior art before adopting a pattern, so a local improvement does not silently split a repo-wide convention, and labels review findings that need their own ticket. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |
@@ -39,6 +35,15 @@ into place, so pull later changes with `npx skills@latest update`.
 | [review-vue](./skills/code-review/review-vue/SKILL.md) | Vue 3 reactivity bugs and watchers that should be a computed, a prop, a v-model, or an event listener. |
 | [review-tanstack-query](./skills/code-review/review-tanstack-query/SKILL.md) | TanStack Query cache and reactivity defects: frozen keys, cache collisions, invalidation that matches nothing, unsafe cache writes. |
 | [review-acceptance-criteria](./skills/code-review/review-acceptance-criteria/SKILL.md) | Checks the diff against the ticket, issue, or spec behind it, and lists out-of-scope changes. |
+
+### Improve code
+
+| Skill | What it does |
+| --- | --- |
+| [improve-code-docs](./skills/improve-code/improve-code-docs/SKILL.md) | Documentation pass over TypeScript, JavaScript, and Vue files: adds missing JSDoc, fixes docs that drifted from the signature, and cuts comments that restate the code. |
+| [improve-code-organisation](./skills/improve-code/improve-code-organisation/SKILL.md) | Reorganises a Vue 3 `<script setup>` component so it reads by logical concern instead of by API type. |
+| [improve-code-simplicity](./skills/improve-code/improve-code-simplicity/SKILL.md) | Adversarial pass over a change that cuts what nothing present needs: one-caller abstractions, options nobody sets, unreachable branches, premature extensibility. Also the review skill's simplicity pass. |
+| [improve-tests](./skills/improve-code/improve-tests/SKILL.md) | Strengthens existing tests: fixes false confidence and brittleness, adds high-value missing cases at the right level, and verifies the affected targets. |
 
 ### Writing
 
