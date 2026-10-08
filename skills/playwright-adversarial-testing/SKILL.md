@@ -26,11 +26,12 @@ Copy this checklist and tick it off as you go:
 Adversarial test progress:
 - [ ] 1. Scope: read every changed file, list states, inputs, async actions
 - [ ] 2. App running, port read from the log
-- [ ] 3. Every state renders (mock the backend where needed)
-- [ ] 4. Adversarial probes the change points at
-- [ ] 5. Console and network triaged: change errors vs ambient noise
-- [ ] 6. Report written
-- [ ] 7. Dev server killed, artifacts removed
+- [ ] 3. Sign-in path checked: third-party login works in this browser, or the user chose another route
+- [ ] 4. Every state renders (mock the backend where needed)
+- [ ] 5. Adversarial probes the change points at
+- [ ] 6. Console and network triaged: change errors vs ambient noise
+- [ ] 7. Report written
+- [ ] 8. Dev server killed, artifacts removed
 ```
 
 ### 1. Establish scope — what actually changed
@@ -61,13 +62,30 @@ done
 echo "${port:-no port found, see $log}"
 ```
 
-### 3. Verify each state renders
+### 3. Check the sign-in path
 
-Walk your state list from step 1. For states reachable by URL alone (missing params, bad route), just `browser_navigate`. For states behind a backend you can't satisfy (you have no valid token, the record doesn't exist, the API is auth'd), **mock the backend** — this is the core technique, see `references/playwright-recipes.md`.
+Before testing anything behind a login, find out how the app signs users in. Search the repo for a third-party identity provider:
+
+```bash
+git grep -nIiE 'accounts\.google\.com|gsi/client|GoogleAuthProvider|signInWithPopup|signInWithRedirect|oauth2|openid|oidc|@auth0|msal|okta|keycloak|cognito|next-auth|@auth/|passport-google|sign in with (google|microsoft|github|apple)' \
+  -- ':!*.lock' ':!*lock.json' | head -20
+```
+
+Then open the login page in the browser and look for a "Sign in with …" button or a redirect to the provider's domain.
+
+**No third-party login** (a username and password form, or no auth at all): continue to step 4.
+
+**Third-party login found:** Google and most other providers refuse to sign in a browser they detect as automated, with a message such as "This browser or app may not be secure". The browser the Playwright MCP server launches by default usually fails this check, and you cannot relaunch the server from inside the session. Read `references/third-party-login.md` and follow it. It covers how to test whether sign-in works in the current browser, the ways to relaunch the server so it does, and the alternatives to a real sign-in.
+
+Never type the user's credentials yourself, and never ask for them. The user signs in by hand, in the browser window the server opens.
+
+### 4. Verify each state renders
+
+Walk your state list from step 1, signed in by the route step 3 settled. For states reachable by URL alone (missing params, bad route), just `browser_navigate`. For states behind a backend you can't satisfy (you have no valid token, the record doesn't exist, the API is auth'd), **mock the backend** — this is the core technique, see `references/playwright-recipes.md`.
 
 After each navigation, take a `browser_snapshot` to confirm the right branch rendered, and for anything subtle dump the actual DOM text/HTML. Screenshot the states a reviewer would want to see.
 
-### 4. Push on it — the adversarial pass
+### 5. Push on it — the adversarial pass
 
 This is where the value is. Pick the probes the change points at; don't run all of them mechanically. For each, capture what you observed even when it holds — "🔍 500 on submit → clean inline error, buttons stay" tells the author what's covered.
 
@@ -78,15 +96,15 @@ This is where the value is. Pick the probes the change points at; don't run all 
 - **Persistence & multiplicity.** Reload mid-flow. Browser back/forward. Do the action, then reload — is the new state reflected? Open the flow in two tabs.
 - **Viewport.** `browser_resize` to a phone width (e.g. 375px) and re-check layout for the states that matter.
 
-### 5. Separate signal from noise
+### 6. Separate signal from noise
 
 Read the console (`browser_console_messages`) and network. But **distinguish the change's errors from ambient noise** — third-party widgets (chat, analytics, Sentry), CORS in dev, devtools sandbox warnings are usually pre-existing environment noise, not your finding. Call them out as noise so the author isn't misled, but don't bury a real error under them. A genuinely new console error or failed request caused by the change *is* a finding.
 
-### 6. Report
+### 7. Report
 
 Lead with a verdict, then steps, then findings ordered by severity. For each real issue: what the user does, what happens, why (point at `file:line` and the root cause), and a suggested fix. Mark probes that held too — coverage the author can't see from a green demo. Flag claim/diff mismatches and any path you couldn't exercise (e.g. a live destructive action) and why.
 
-### 7. Clean up
+### 8. Clean up
 
 Kill the dev server you started (`pkill -f` on its command), remove screenshot artifacts you created, and note any leftover (e.g. `.playwright-mcp/`). Leave the working tree as you found it.
 
@@ -96,4 +114,4 @@ If asked to fix what you found: fix the root cause, then **re-verify in the brow
 
 ## Recipes
 
-Concrete Playwright-MCP code for mocking, stateful backends, delays, race detection, overflow measurement, and sandbox gotchas (e.g. `setTimeout` is undefined — use `page.waitForTimeout`) live in `references/playwright-recipes.md`. Read it before step 3 — most adversarial scenarios are unreachable without these patterns.
+Concrete Playwright-MCP code for mocking, stateful backends, delays, race detection, overflow measurement, and sandbox gotchas (e.g. `setTimeout` is undefined — use `page.waitForTimeout`) live in `references/playwright-recipes.md`. Read it before step 4 — most adversarial scenarios are unreachable without these patterns.
