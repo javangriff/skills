@@ -14,6 +14,13 @@
       "prompt": "Review notifier.test.ts against notifier.ts. I'm particularly worried that it uses a mock. Report only.",
       "expected_output": "Does not categorically reject the mock or its call-count assertion: sending exactly one message is the observable contract and there is no returned state to inspect. It may suggest clearer naming or a fake only if tied to a concrete benefit, but should ideally report no hard finding and no high-confidence judgement call.",
       "files": ["fixtures/notifier.ts", "fixtures/notifier.test.ts"]
+    },
+    {
+      "id": 2,
+      "name": "prefer-role-selectors",
+      "prompt": "Review save-form.test.ts against save-form.ts. Report only.",
+      "expected_output": "Flags the `getByTestId('name-input')` and `getByTestId('save-button')` queries and recommends `getByRole('textbox', { name: 'Name' })` (or `getByLabelText('Name')`) and `getByRole('button', { name: 'Save' })`, because the input has a label and the button has an accessible name. Flags the `form button` CSS selector the same way. Does not demand a role query for the decorative spinner, where the test ID is an acceptable fallback, though it may suggest giving the spinner an accessible role and name such as `role=\"status\"`.",
+      "files": ["fixtures/save-form.ts", "fixtures/save-form.test.ts"]
     }
   ]
 }

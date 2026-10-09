@@ -20,6 +20,7 @@ A test earns its cost when it detects a meaningful behaviour change, survives an
 - **Prefer state and results over interactions.** Assert returned values, emitted events, persisted/retrievable state, or user-visible output. Calls and call order usually describe the implementation.
 - **Allow interaction assertions when interaction is the contract.** Examples include sending a command, enforcing a retry ceiling, avoiding a duplicate charge, or preserving an externally required order. State why the interaction matters.
 - **Use the right observation point.** Querying a database is a side channel when testing a service API, but it is a legitimate observation when the persistence adapter itself is the unit.
+- **Query the UI the way a user finds it.** In UI and end-to-end tests, locate elements by accessible role and name (`getByRole('button', { name: 'Save' })`), then by label, placeholder, or visible text. Fall back to a test ID only when no accessible query can identify the element, such as a purely decorative container, and do not reach for CSS classes or DOM structure. A test ID passes when the button has lost its role or accessible name; a role query fails, and it also survives markup refactors that a test ID would not. When a test ID is used, the fix is often to give the element an accessible name, not to keep the ID.
 - **Apply the refactor test.** If renaming, extracting, inlining, or replacing an internal collaborator breaks the test without changing behaviour, the test is coupled to structure.
 
 ## Assertions and oracles
