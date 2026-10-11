@@ -63,4 +63,6 @@ Two sections, in this order:
 
 **Judgement calls.** For each: `file:line`, the smell or standard, why it hurts here in one sentence, the fix. Documented-standard breaches first, then baseline smells. Where a smell recurs, report it once with the list of locations.
 
+Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
+
 Skip both sections' preamble. If a section is empty, say so in one line. Stay inside the word budget when given one. Your final message is the review itself.

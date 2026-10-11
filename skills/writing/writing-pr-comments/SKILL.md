@@ -14,7 +14,7 @@ Write each comment as these parts, in this order. Omit a part only when it genui
 1. **The claim.** What is wrong, in one sentence, in plain words. Lead with the thing itself, not a preamble.
 2. **The consequence.** The concrete scenario where it bites: the input, the state, what the user or the build sees. This is what turns an opinion into a finding.
 3. **How you know.** Say whether the failure was observed or read off the code, because the author weighs those differently. Mirror the evidence you actually hold, at the precision you hold it: if all you know is that it was verified, write that it was verified, and let the venue go unnamed. Name a browser, an app, a test run, or an environment only when that venue is a fact you were given or a thing you did. Absent a run, "reading the code, so worth a sanity check" is the honest form and costs the finding nothing.
-4. **The suggestion.** The smallest change that fixes it, offered as a suggestion. A short code block when the shape is not obvious from words; otherwise words.
+4. **The suggestion.** The smallest change that fixes it, offered as a suggestion. A short code block when the shape is not obvious from words; otherwise words. When the finding arrives with a `diff` snippet whose `-` lines are all right-side lines in the diff, post the `+` side as the host's suggestion block (` ```suggestion ` on GitHub and GitLab), anchored to exactly the `-` lines, so the author can apply it in one click. Otherwise keep the `diff` block as it came.
 5. **The scope signal.** Say where it belongs: blocking, fix in this PR, fine as a follow-up, or take it or leave it. **Never leave this to be inferred.**
 
 ## Scope signals
