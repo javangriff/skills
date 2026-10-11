@@ -65,6 +65,8 @@ Return two sections:
 
 **Judgement calls.** Missing high-value cases, implementation coupling, excessive mocking, wrong test level, duplicate cross-layer coverage, unclear structure, or needless maintenance cost. For each: `file:line`, the named rule, why it hurts here, and the specific improvement. Group repeated instances.
 
+Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
+
 If a section is empty, say so in one line. Stay inside the word budget. Your final message is the review itself, with no preamble.
 
 ## Guard rails

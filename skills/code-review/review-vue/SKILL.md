@@ -46,10 +46,12 @@ For every finding report:
 - the `file:line`
 - which rule from the reference files it breaks
 - what actually goes wrong at runtime, as a concrete scenario, not a restatement of the rule
-- the specific replacement code
+- the specific replacement code, as a diff snippet (see below)
 
 A finding you cannot state a failure scenario for is not a finding. Drop it. The exception is a removable watcher: there the cost is the indirection itself — a ref and a watcher where a handler would do, firing on writes the call site cannot see — so state that cost concretely instead of inventing a runtime failure. Do not downgrade such a finding to a style aside because nothing triggers it today.
 
 Rank by severity: reactivity that is silently broken at runtime first, then watchers that can be deleted, then style-level reactivity preferences.
+
+Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
 
 When a caller gives you a word budget, stay inside it. Your final message is the review itself. No preamble, no summary of what you read.

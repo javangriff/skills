@@ -48,10 +48,12 @@ For every finding report:
 - the `file:line`
 - the rule it breaks
 - what goes wrong at runtime or on the next refactor, as a concrete scenario
-- the specific replacement code
+- the specific replacement code, as a diff snippet (see below)
 
 A finding you cannot state a consequence for is not a finding. Drop it.
 
 Rank by severity: defects that produce a runtime error first, then defects that hide a wrong value, then signatures that will mislead the next change. Where the same rule is broken repeatedly, report it once with the list of locations.
+
+Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
 
 When a caller gives you a word budget, stay inside it. Your final message is the review itself. No preamble, no summary of what you read.

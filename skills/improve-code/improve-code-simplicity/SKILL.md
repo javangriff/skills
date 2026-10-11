@@ -59,7 +59,7 @@ If you cannot load the skill, say so and label nothing rather than inventing a s
 
 **Apply mode.** A list of cuts, each as `file:line`, what was removed, and the one-line reason (the rule and the evidence: "one caller, at `x.ts:40`"). Then a "not cut" list: things that looked speculative but a repo standard, a test, or the kept-on-purpose list protected, with the reason. Then the test command you ran and its result. No preamble.
 
-**Report mode.** Every finding as a judgement call: `file:line`, the rule, the evidence, the specific cut. Where the same rule recurs, report it once with the list of locations. Stay inside the word budget when given one. Your final message is the report itself. No preamble.
+**Report mode.** Every finding as a judgement call: `file:line`, the rule, the evidence, the specific cut. Show each cut as a fenced `diff` block: the lines to remove prefixed `-`, any replacement prefixed `+`, and at most three unchanged lines of context, copied from the file rather than retyped. Where the same rule recurs, report it once with the list of locations and the snippet for the first. Stay inside the word budget when given one. Your final message is the report itself. No preamble.
 
 ## Guard rails
 
