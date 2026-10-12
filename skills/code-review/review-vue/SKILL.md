@@ -1,11 +1,11 @@
 ---
 name: review-vue
-description: Reviews Vue 3 components for reactivity bugs and for watchers that should be a computed, a prop, a v-model, or an event listener. Use when reviewing a diff that touches Vue 3 components. Triggers include a changed .vue file, or the user mentioning reactivity, refs, computeds, watchers, "unnecessary watch", lost reactivity, destructured props, or a template rendering "[object Object]". Also run by the review skill for every changed .vue file.
+description: Reviews Vue 3 components and composables for reactivity bugs and for watchers that should be a computed, a prop, a v-model, an event listener, or a line of setup code. Use when reviewing a diff that touches Vue 3 components or composables. Triggers include a changed .vue file, a changed TypeScript or JavaScript file that imports from vue or @vueuse, or the user mentioning reactivity, refs, computeds, watchers, "unnecessary watch", lost reactivity, destructured props, or a template rendering "[object Object]". Also run by the review skill for every changed .vue file and every changed script that imports from vue.
 ---
 
 # Review: Vue reactivity
 
-You review Vue 3 components for **reactivity bugs and removable watchers only**. Other passes cover general correctness, style, simplification, TypeScript, and TanStack Query. Do not duplicate that work.
+You review Vue 3 components and composables for **reactivity bugs and removable watchers only**. Other passes cover general correctness, style, simplification, TypeScript, and TanStack Query. Do not duplicate that work.
 
 Read these two reference files in full before you start:
 
@@ -20,8 +20,17 @@ A caller normally gives you a **file list** and a **diff range**. When you are i
 base=$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)
 { git diff --name-only --diff-filter=d "$base"...HEAD
   git diff --name-only --diff-filter=d
-  git ls-files --others --exclude-standard; } | sort -u | grep -E '\.vue$'
+  git ls-files --others --exclude-standard; } | sort -u |
+  grep -E '\.(vue|[cm]?[jt]sx?)$' | grep -vE '\.(test|spec|stories)\.' |
+  while read -r f; do
+    case "$f" in
+      *.vue) echo "$f" ;;
+      *) grep -E "from ['\"](vue|@vueuse/[a-z-]+)['\"]" "$f" | grep -qv '^import type' && echo "$f" ;;
+    esac
+  done
 ```
+
+A script is in scope when it takes a value, not just a type, from `vue` or `@vueuse`. That is what decides whether it holds reactivity, not its name: a composable can live in `context.ts` or a store, and a `use*` file can be a plain query wrapper. Tests and stories are left out, because their refs are fixtures.
 
 Run the diff to see which lines changed.
 
@@ -29,7 +38,9 @@ Run the diff to see which lines changed.
 
 Read each file completely, including the template. Most ref-unwrapping bugs only show up when you read the template against the script. Follow imports into composables when a reactive value crosses that boundary; a watcher's real source is often defined elsewhere.
 
-For every watcher in the changed code, ask the question from `watch-smells.md`: **is this synchronising, or reacting?** Synchronising is a `computed`, a prop, or a `v-model`. Only genuine side effects earn a watcher. When you propose removing one, name the specific replacement. When the replacement is an event listener, read the child component's `defineEmits` to find the right event rather than assuming `update:modelValue`.
+Review a composable the same way, but from its callers. A watcher inside a composable usually watches something a caller passed in, such as a `defineModel` ref bound to a child's `v-model`. Read every call site before judging it: who writes the value, and whether a handler at the call site would do the job.
+
+For every watcher in the changed code, ask the two questions from `watch-smells.md`. First: **is this synchronising, or reacting?** Synchronising is a `computed`, a prop, or a `v-model`. Second, for one that is reacting: **does it need to be a watcher?** A side effect earns a watcher only when its source changes in ways no single handler sees. If one event causes it, it belongs in that event's handler. If its source cannot change after setup, it is a line of setup code. When you propose removing one, name the specific replacement. When the replacement is an event listener, read the child component's `defineEmits` to find the right event rather than assuming `update:modelValue`.
 
 Ignore anything on lines the diff did not touch, unless a changed line depends on it. Do not flag the cases listed under "When a watcher **is** correct" in the reference.
 

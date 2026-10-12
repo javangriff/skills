@@ -1,0 +1,35 @@
+{
+  "skill_name": "review-vue",
+  "evals": [
+    {
+      "id": 0,
+      "name": "composable-watcher-on-own-model",
+      "prompt": "Review useCommitOnClose.ts, FilterTag.vue and ActiveFilters.vue for reactivity problems and removable watchers. Report only.",
+      "expected_output": "Flags the `watch(open)` in `useCommitOnClose.ts` as a watcher standing in for the popover's `update:open` event (watch-smells section 3), even though committing is a real side effect. It establishes that nothing outside the component writes `open`: the `@select=\"open = false\"` write is the tag's own code and can call the handler, and the parent's `:open`/`@update:open` pair only stores what the tag emitted. It also reports the watcher as broken rather than just removable: when an edit empties the tag's filter and the popover closes, `ActiveFilters` drops the tag from `shownFilters` in the same update, so the tag unmounts before its `open` prop turns false and the commit never runs. The fix removes the composable and commits from an `@update:open` handler on the popover (and from the `@select` path), shown as a diff. It does not keep the watcher on the grounds that `open` has several writers.",
+      "files": [
+        "fixtures/useCommitOnClose.ts",
+        "fixtures/FilterTag.vue",
+        "fixtures/ActiveFilters.vue"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "dev-warning-watcher-is-setup-code",
+      "prompt": "Review PinnedToggleGroup.vue for reactivity problems and removable watchers. Report only.",
+      "expected_output": "Flags the DEV-only `watch(..., { immediate: true })` as setup code written as a watcher (watch-smells section 12): its source is the column's filter configuration and the table's filtering mode, which the component reads once, so the warning can be a plain `if` at setup. It does not exempt the watcher because logging is a side effect. The fix is shown as a diff replacing the watcher with `if (import.meta.env.DEV && serverFiltering.value && !column.value?.filterOptions) console.warn(...)`. It may note the precondition (options that load after mount would justify the watcher) but does not invent such a path.",
+      "files": [
+        "fixtures/PinnedToggleGroup.vue"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "keep-watcher-with-outside-writer",
+      "prompt": "Review StatusFilter.vue and filtersStore.ts for reactivity problems and removable watchers. Report only.",
+      "expected_output": "Keeps the watcher that persists `filters.status` to localStorage and reports no finding against it. It names the outside writer that makes the watcher necessary: the store's `reset()`, called from the page header and on a company switch, writes `status` without going through `StatusSelect`, so an `@update:model-value` handler would leave a stale value in storage after a reset. It does not suggest replacing the watcher with an event listener. Suggesting the watcher move into the store, so it also covers a reset while StatusFilter is unmounted, is acceptable; removing the watcher is not.",
+      "files": [
+        "fixtures/StatusFilter.vue",
+        "fixtures/filtersStore.ts"
+      ]
+    }
+  ]
+}

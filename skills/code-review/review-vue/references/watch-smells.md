@@ -2,7 +2,10 @@
 
 A `watch` is a side effect. Most watchers in a Vue codebase are not side effects at all — they are derived state or a missing event listener, written imperatively. Every watcher in a diff should have to justify itself.
 
-The question to ask each one: **is this synchronising, or is this reacting?** Synchronising is a `computed`, a prop, or a `v-model`. Only genuine side effects — network calls, DOM work, storage, logging, navigation — earn a watcher.
+Ask each one two questions.
+
+1. **Is this synchronising, or is this reacting?** Synchronising is a `computed`, a prop, or a `v-model`.
+2. **If it is reacting, does it need to be a watcher?** Being a side effect — a network call, DOM work, storage, logging, navigation — says what the code may *do*, not what should *trigger* it. A watcher earns its place only when its source changes through paths no single handler sees. When one event causes the effect, the effect belongs in that event's handler (section 3). When the source cannot change after setup, the effect is a line of setup code (section 12).
 
 Report each finding with the concrete replacement code, not just the category name.
 
@@ -19,7 +22,7 @@ Report each finding with the concrete replacement code, not just the category na
 9. A watcher that mutates its own source
 10. Async watchers with no cleanup
 11. `watchEffect` where `watch` was meant
-12. Watchers that should be lifecycle hooks
+12. Watchers that should be setup code or lifecycle hooks
 - When a watcher **is** correct
 
 ## 1. Mirroring a prop into a local ref
@@ -55,6 +58,8 @@ watch(selectedRegion, region => { onRegionChange(region) })
 
 …where `selectedRegion` is only ever written by `<RegionSelect v-model="selectedRegion" />`. The watcher is a roundabout event listener that also fires on programmatic changes the author did not intend.
 
+The same smell hides inside composables and in a component's own model. A composable such as `useCommitOnClose(open)` that runs `watch(open, isOpen => { if (!isOpen) commit() })`, where `open` is the caller's `defineModel` bound to a popover's `v-model:open`, is the popover's `update:open` event written as a watcher. The body being a real side effect does not change that: commit in the handler.
+
 **Fix:** listen to the component's own event instead — `@update:model-value="onRegionChange"`, or whatever the child emits (`@change`, `@select`, `@submit`). Read the child's `defineEmits` to find the right event; do not assume `update:modelValue` is the only one.
 
 **Why it matters beyond tidiness:** a watcher fires for *every* change to the value, including resets, programmatic seeding, and route-driven restores. An event listener fires only on actual user interaction. Conflating the two causes duplicate API calls and spurious form-dirty state.
@@ -63,7 +68,15 @@ watch(selectedRegion, region => { onRegionChange(region) })
 
 The finding stands on what is true now, so state it that way: the ref plus the watcher is two moving parts where the handler is one, and the watcher's body already runs on writes the author cannot see from the call site. Name the child's event and show the handler — a reader should not have to imagine a future writer to accept the finding.
 
-**The precondition to establish, and how:** the value is written *only* by the child's model. Search the component for every write to it before reporting — an assignment, a `setFieldValue`, a reset helper, a store action, a seed from the route. Find one and this is not the smell; the watcher is the only thing that catches every path, and swapping it for a listener drops the others (see the `clearFilters` case under "When a watcher **is** correct").
+**A watcher on a `defineModel` can miss the change it exists for.** When the parent binds the model, writing the local ref only emits; the local value turns over when the parent patches the new prop back in. If the parent's re-render unmounts the child instead (a `v-if` that the same change made false, such as a tag that disappears once its filter is emptied), the prop never arrives and the watcher never runs. A handler on the emitted event runs at emit time, before the parent re-renders, so it cannot be skipped this way. When the child can be unmounted by the change, report the watcher as broken, not just removable.
+
+**The precondition to establish, and how:** nothing writes the value except through the event you would listen to. Search for every write before reporting — an assignment, a `setFieldValue`, a reset helper, a store action, a seed from the route — and decide for each whether it is a separate writer:
+
+- **A write in the component's own code** (`@select="open = false"`, a close button) is not a separate writer. The component can call the handler there instead, which is the fix.
+- **A parent bound with `v-model`** that only ever stores what the child emitted is the child's event, not a second writer. Read the parent: it counts only if it also assigns the value itself.
+- **A write the component cannot see** — a parent's reset, a route restore, a store action — is a separate writer. Name the line. Find one and this is not the smell; the watcher is the only thing that catches every path, and swapping it for a listener drops the others (see the last case under "When a watcher **is** correct").
+
+"More than one writer" is a claim about specific lines. If you cannot point at the write the handler would miss, the precondition holds and the finding stands.
 
 ## 4. Watching something a parent should have passed as a prop
 
@@ -127,9 +140,29 @@ Responses can resolve out of order, so a slow early request overwrites a fast la
 
 Also flag `watchEffect` whose body has a conditional early return — dependencies read only on some branches are tracked inconsistently between runs.
 
-## 12. Watchers that should be lifecycle hooks
+## 12. Watchers that should be setup code or lifecycle hooks
 
-A watcher with `{ immediate: true }` on a value that never changes afterwards is `onMounted` written obliquely. Say so.
+A watcher with `{ immediate: true }` on a value that never changes afterwards is a line of setup code (or `onMounted`, if it needs the DOM) written obliquely. Say so.
+
+```js
+if (import.meta.env.DEV) {
+  watch(() => serverMode.value && !column.options, missing => {
+    if (missing) console.warn(`${id} has no options`)
+  }, { immediate: true })
+}
+```
+
+**Tell:** `{ immediate: true }`, and a source that is configuration — a column definition, a mode prop, a feature flag, an env check — which the component reads once and is not built to have change under it. One-shot diagnostics (dev warnings, deprecation notices) are the usual case. Logging is a side effect, but that only says the code may log; it does not say the log needs a watcher.
+
+**Fix:** run it at setup.
+
+```js
+if (import.meta.env.DEV && serverMode.value && !column.options) {
+  console.warn(`${id} has no options`)
+}
+```
+
+**Precondition:** the source really is fixed for the component's life. If a realistic path changes it after mount (options that load asynchronously, a mode the user toggles), the watcher is correct; say which path.
 
 ---
 
@@ -137,8 +170,8 @@ A watcher with `{ immediate: true }` on a value that never changes afterwards is
 
 Do not flag these:
 
-- Genuine side effects: firing a request, writing to `localStorage`, imperative DOM work, analytics, navigation, toasts.
+- Genuine side effects — firing a request, writing to `localStorage`, imperative DOM work, analytics, navigation, toasts — **whose source changes through more than one path, or through a path no handler sees.** A side effect caused by one user event belongs in that event's handler (section 3), and one whose source is fixed belongs in setup (section 12), however real the effect is.
 - Reacting to a change with something that is not a value — opening a dialog, focusing an input, scrolling.
 - Bridging to non-reactive external systems: a chart instance, a map SDK, a websocket subscription.
 - Effects that need the old value — `watch(x, (next, prev) => ...)` has no `computed` equivalent.
-- A watcher on a child's model value that **more than one thing writes** — the child's event plus a reset button, a deep link, or a store restore. The watcher is the only hook that sees every path; an event listener silently misses the programmatic ones. Rule 3 does not apply here.
+- A watcher on a child's model value that **more than one thing writes** — the child's event plus a reset button, a deep link, or a store restore. The watcher is the only hook that sees every path; an event listener silently misses the programmatic ones. Rule 3 does not apply here. This needs a named write from outside the component, as section 3 sets out: the component's own assignments and a parent echoing the child's emit do not count.

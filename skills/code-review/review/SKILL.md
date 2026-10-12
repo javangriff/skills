@@ -15,7 +15,7 @@ The passes are skills in their own right:
 | `improve-code-simplicity` (report mode) | always |
 | `review-tests` | any recognised test, fixture, snapshot, or test-runner configuration file changed |
 | `review-typescript` | any TypeScript source file changed |
-| `review-vue` | any `.vue` file changed |
+| `review-vue` | any `.vue` file changed, or any non-test script that imports a value from `vue` or `@vueuse` (composables, stores, context helpers) |
 | `review-tanstack-query` | any changed source file contains query identifiers |
 | `review-acceptance-criteria` | always; it locates the ticket or spec itself and skips when there is none |
 
@@ -98,13 +98,20 @@ changed=$(mktemp)
   git diff --name-only --diff-filter=d
   git ls-files --others --exclude-standard; } | sort -u > "$changed"
 grep -E '\.(ts|tsx|mts|cts)$' "$changed"                          # review-typescript
-grep -E '\.vue$' "$changed"                                        # review-vue, and review-typescript when lang="ts"
+grep -E '\.vue$' "$changed"                                        # review-typescript when lang="ts"
+grep -E '\.(vue|[cm]?[jt]sx?)$' "$changed" | grep -vE '\.(test|spec|stories)\.' |
+  while read -r f; do                                                # review-vue: components, plus scripts holding Vue reactivity
+    case "$f" in
+      *.vue) echo "$f" ;;
+      *) grep -E "from ['\"](vue|@vueuse/[a-z-]+)['\"]" "$f" | grep -qv '^import type' && echo "$f" ;;
+    esac
+  done
 grep -Ei '(^|/)(__tests__|tests?|specs?|fixtures?|snapshots?|e2e|cypress|playwright)(/|$)|(\.(test|spec)\.[^/]+$|_(test|spec)\.[^/]+$|(^|/)test_[^/]+\.[^/]+$|[[:alnum:]]Tests?\.[^/]+$|\.snap$)|(^|/)(jest|vitest|playwright|cypress)\.config\.|(^|/)(pytest\.ini|conftest\.py|tox\.ini|phpunit\.xml)$' "$changed"  # review-tests
 grep -E '\.(ts|tsx|mts|cts|js|jsx|mjs|vue|svelte)$' "$changed" | tr '\n' '\0' \
   | xargs -0 grep -lE 'useQuery|useMutation|useInfiniteQuery|useQueryClient|useSuspenseQuery|queryOptions|queryKey|queryFn|invalidateQueries|setQueryData|getQueryData|cancelQueries|prefetchQuery|@tanstack/'   # review-tanstack-query
 ```
 
-Deleted files are excluded. The query grep runs over source files only, so documentation that mentions `useQuery` does not trigger the pass. A pass whose input is empty is **skipped, and the report says so**. A skipped pass that is never mentioned reads as a pass that found nothing.
+Deleted files are excluded. The query grep runs over source files only, so documentation that mentions `useQuery` does not trigger the pass. The `review-vue` list is chosen by what a script imports rather than its name, because a composable's watcher is as likely to sit in `context.ts` or a store as in a `use*` file. A pass whose input is empty is **skipped, and the report says so**. A skipped pass that is never mentioned reads as a pass that found nothing.
 
 The acceptance-criteria pass always runs. It falls back to spec files when there is no tracker, and skips itself when it finds nothing. Give it what you already know so it does not repeat the lookup: the branch name, the PR title and head branch if any, and the most recent commit subject.
 
@@ -142,7 +149,7 @@ If the harness has no subagents, run the passes in sequence yourself by calling 
 
 Two rules for dispatch:
 
-- For a diff with more than about eight changed `.vue` files, fan `review-vue` out across several subagents of three or four files each, so no single pass holds too much at once.
+- For a diff with more than about eight files in the `review-vue` list, fan `review-vue` out across several subagents of three or four files each, so no single pass holds too much at once. Keep a composable in the same group as the components that call it, since the pass judges a composable's watcher from its call sites.
 - Do not pass `--fix` or `--comment` down. Passes report; the merged report acts.
 
 The Vue and TanStack passes overlap on `.vue` files that contain queries. That is intentional, since they look for different defects. Deduplicate at merge time, not by narrowing either file list.
