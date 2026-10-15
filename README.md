@@ -53,6 +53,14 @@ into place, so pull later changes with `npx skills@latest update`.
 | [writing-pr-comments](./skills/writing/writing-pr-comments/SKILL.md) | Turns review findings into PR comments an author can act on: the claim, the consequence, how you know, a suggested fix, and an explicit scope signal. |
 | [simplified-technical](./skills/writing/simplified-technical/SKILL.md) | Writes prose in ASD-STE100 Simplified Technical English: plain, controlled language with one word per meaning. |
 
+### Ticket workflow
+
+| Skill | What it does |
+| --- | --- |
+| [implement-ticket](./skills/ticket-workflow/implement-ticket/SKILL.md) | Takes a Jira, Linear, or GitHub ticket to a reviewed PR: plans it, hands the build to a subagent, reviews until it is right, and opens the PR. For a parent ticket, picks up the first ready child or orchestrates one pipeline per ready child. |
+| [plan-ticket](./skills/ticket-workflow/plan-ticket/SKILL.md) | Turns one ticket into a plan an implementer with no access to the conversation can follow, grounded in the code it will change. |
+| [implement-plan](./skills/ticket-workflow/implement-plan/SKILL.md) | The implementer: builds a plan on a given branch, verifies and commits it, reports, and takes review feedback in rounds. |
+
 ## Layout and conventions
 
 See [AGENTS.md](./AGENTS.md).

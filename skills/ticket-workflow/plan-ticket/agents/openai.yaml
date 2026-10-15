@@ -1,0 +1,3 @@
+interface:
+  display_name: "Plan Ticket"
+  short_description: "Turn one ticket into a plan an implementer subagent can follow"

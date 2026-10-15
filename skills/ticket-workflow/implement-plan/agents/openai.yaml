@@ -1,0 +1,3 @@
+interface:
+  display_name: "Implement Plan"
+  short_description: "Build a written plan on a branch, verify it, and take review feedback"
