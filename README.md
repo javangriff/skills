@@ -20,6 +20,7 @@ into place, so pull later changes with `npx skills@latest update`.
 | Skill | What it does |
 | --- | --- |
 | [grill-me](./skills/grill-me/SKILL.md) | Interviews you relentlessly about a plan or design until every branch of the decision tree is resolved. |
+| [show-me-an-example](./skills/show-me-an-example/SKILL.md) | Explains real code with example inputs and outputs at each step, follows later changes, and captures design decisions in tickets or handoff prompts when requested. |
 | [playwright-adversarial-testing](./skills/playwright-adversarial-testing/SKILL.md) | Drives a running app with Playwright to attack a branch's changes: edge cases, failure paths, race conditions, and bad UX a happy-path demo would miss. |
 | [staying-in-scope](./skills/staying-in-scope/SKILL.md) | Decides whether a change belongs in the work at hand: checks prior art before adopting a pattern, so a local improvement does not silently split a repo-wide convention, and labels review findings that need their own ticket. |
 | [setup-javan-skills](./skills/setup-javan-skills/SKILL.md) | Records where a repo tracks issues and how to fetch them, so the review skills can check a change against its ticket. Run once per repo. |

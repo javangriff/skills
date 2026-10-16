@@ -1,0 +1,3 @@
+interface:
+  display_name: "Show Me an Example"
+  short_description: "Trace real code with examples and output at each step"
