@@ -30,6 +30,16 @@
         "fixtures/StatusFilter.vue",
         "fixtures/filtersStore.ts"
       ]
+    },
+    {
+      "id": 3,
+      "name": "reset-watcher-behind-remount",
+      "prompt": "Review ZoomableChart.vue and TrafficCard.vue for reactivity problems and removable watchers. Report only.",
+      "expected_output": "Flags the `watch` in `ZoomableChart.vue` that sets `zoom` back to null when `baseRange` changes as removable (watch-smells section 13). It reads `TrafficCard.vue` to show why. First, the watcher cannot fire for this caller: a new `from`/`to` changes the query key, `isLoading` turns true, and the `v-if=\"isLoading\"` / `v-else` pair unmounts the chart, so a fresh chart mounts with the new range and a watcher without `immediate` never sees the change. Second, `zoom` is the card's own ref bound through `v-model:zoom`, and the card's `watch` on `from`/`to` already clears it, so the chart is a second owner of the reset. It does not keep the watcher on the strength of its comment about comparing the range by value. The fix is shown as a diff deleting the chart's watcher (and the now-unused `watch` import), leaving the card's reset in place. It does not flag the card's watcher, which sees every change to `from` and `to` and owns the value.",
+      "files": [
+        "fixtures/ZoomableChart.vue",
+        "fixtures/TrafficCard.vue"
+      ]
     }
   ]
 }

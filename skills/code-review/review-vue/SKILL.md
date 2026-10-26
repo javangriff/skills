@@ -40,7 +40,11 @@ Read each file completely, including the template. Most ref-unwrapping bugs only
 
 Review a composable the same way, but from its callers. A watcher inside a composable usually watches something a caller passed in, such as a `defineModel` ref bound to a child's `v-model`. Read every call site before judging it: who writes the value, and whether a handler at the call site would do the job.
 
+Review a component's watchers from its parents too. Find every component that renders it (grep for the import) and read how it is rendered. Check whether a `v-if` or `:key` remounts it when the watched source changes, and whether the parent already does the same thing to the same model. A watcher whose only path to firing runs through a remount is dead code.
+
 For every watcher in the changed code, ask the two questions from `watch-smells.md`. First: **is this synchronising, or reacting?** Synchronising is a `computed`, a prop, or a `v-model`. Second, for one that is reacting: **does it need to be a watcher?** A side effect earns a watcher only when its source changes in ways no single handler sees. If one event causes it, it belongs in that event's handler. If its source cannot change after setup, it is a line of setup code. When you propose removing one, name the specific replacement. When the replacement is an event listener, read the child component's `defineEmits` to find the right event rather than assuming `update:modelValue`.
+
+A comment on a watcher explains how it works, not whether it is needed. Answer the questions in `watch-smells.md` yourself; do not take the comment's word for it.
 
 Ignore anything on lines the diff did not touch, unless a changed line depends on it. Do not flag the cases listed under "When a watcher **is** correct" in the reference.
 

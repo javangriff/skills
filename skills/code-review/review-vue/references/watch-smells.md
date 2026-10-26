@@ -23,6 +23,7 @@ Report each finding with the concrete replacement code, not just the category na
 10. Async watchers with no cleanup
 11. `watchEffect` where `watch` was meant
 12. Watchers that should be setup code or lifecycle hooks
+13. Resetting state when an input changes
 - When a watcher **is** correct
 
 ## 1. Mirroring a prop into a local ref
@@ -163,6 +164,25 @@ if (import.meta.env.DEV && serverMode.value && !column.options) {
 ```
 
 **Precondition:** the source really is fixed for the component's life. If a realistic path changes it after mount (options that load asynchronously, a mode the user toggles), the watcher is correct; say which path.
+
+## 13. Resetting state when an input changes
+
+```js
+const selection = defineModel('selection')
+watch(() => props.range, () => { selection.value = null })
+```
+
+**Tell:** the watcher's body sets something back to empty (`null`, `[]`, a default), and its source is an input: a prop, or a value derived from the component's data.
+
+Before keeping one, answer three questions:
+
+1. **Can it fire?** Read every component that renders this one. If a change to the source also swaps the component out (a `v-if` on a loading state, a `:key` tied to the source, a route change), the instance that would see the change unmounts, and the new one mounts with the new value. A watcher without `immediate` never runs. Report it as dead code and name the `v-if` or `:key`.
+2. **Who owns the value?** When it is a `defineModel` the parent binds, the parent already knows when the input changes, because it passes the input in. The reset belongs there. A child watcher resetting parent-owned state is a second owner. If the parent also resets it, one of the two is dead. Say which.
+3. **Is `:key` the reset?** When all the component's local state should start over with the input, `:key="input"` on the parent's tag does it without a watcher.
+
+**Fix:** delete the watcher, and keep the reset where the input changes: the parent's handler, or the parent's own watcher when the input changes through several paths. When the child's prop docs promise the reset, change them to say the caller owns it.
+
+**When it is correct:** the component owns the state (a local ref, not a model), and the input changes in place without a remount, through a path the component cannot otherwise see.
 
 ---
 
