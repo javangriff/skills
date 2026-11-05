@@ -147,9 +147,10 @@ If the harness can run subagents, start every selected pass in **one step** so t
 
 If the harness has no subagents, run the passes in sequence yourself by calling the Skill tool with each pass's name and the same inputs, and collect each result before starting the next.
 
-Two rules for dispatch:
+Three rules for dispatch:
 
 - For a diff with more than about eight files in the `review-vue` list, fan `review-vue` out across several subagents of three or four files each, so no single pass holds too much at once. Keep a composable in the same group as the components that call it, since the pass judges a composable's watcher from its call sites.
+- For a diff with more than about eight non-test source files, or more than about 1,500 changed non-test lines, fan `review-code` out across several subagents of three to five source files each. Group files that import each other, since its state and async step looks for bugs between modules, and a group that splits a caller from its callee cannot see them. Each subagent gets the full word budget, and every subagent still receives the diff command, so it can read beyond its group when a call leads there.
 - Do not pass `--fix` or `--comment` down. Passes report; the merged report acts.
 
 The Vue and TanStack passes overlap on `.vue` files that contain queries. That is intentional, since they look for different defects. Deduplicate at merge time, not by narrowing either file list.

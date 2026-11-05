@@ -43,6 +43,10 @@ Look for: wrong or inverted logic, off-by-one, an unhandled `null` or empty case
 
 A bug you cannot state a failure scenario for is not a bug. Drop it or move it to the quality list as a judgement call.
 
+### Step 2b: state and async hazards
+
+Run this step when the change contains any `await`, promise, or deferred callback (`nextTick`, timer, queue), or state written from more than one function or module. Read `references/state-and-async-hazards.md` and follow it: inventory, per-item checks, then the interleaving of public operations. Its bugs join the step 2 list. These bugs sit between hunks rather than in one, so reading hunk by hunk does not find them.
+
 ## Step 3: quality pass
 
 Match each hunk against the repo's documented standards first, then against the baseline in the reference. Report a documented-standard breach as a breach, citing the file and rule. Report a baseline match as a possible smell, naming the smell.
@@ -63,6 +67,8 @@ Two sections, in this order:
 
 **Judgement calls.** For each: `file:line`, the smell or standard, why it hurts here in one sentence, the fix. Documented-standard breaches first, then baseline smells. Where a smell recurs, report it once with the list of locations.
 
-Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
+Show each fix that gets a snippet (every judgement call, and the bugs the budget rule below picks) as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
 
-Skip both sections' preamble. If a section is empty, say so in one line. Stay inside the word budget when given one. Your final message is the review itself.
+When step 2b ran, close the Bugs section with a **Hazard inventory**: one line per category in the reference's Step A, giving each item checked and its outcome, such as `Deferred work: scheduleValueRemoval (bug 4)` or `Copies: store → values sync (clean)`. A category with nothing in it gets `none`. The inventory is what shows each item was walked through Step B, so a category is never left off.
+
+Skip both sections' preamble. If a section is empty, say so in one line. Stay inside the word budget when given one, and spend it on bugs first: show the diff block for the three most severe bugs only, and give every other bug its claim and failure scenario without a snippet. The hazard inventory does not count toward the budget. Judgement calls get whatever budget is left. Your final message is the review itself.

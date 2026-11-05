@@ -1,0 +1,21 @@
+{
+  "skill_name": "review-code",
+  "evals": [
+    {
+      "id": 0,
+      "name": "document-cache-state-and-async-hazards",
+      "prompt": "Review these files as newly added: a client-side cache for a collaboratively edited document, with per-path entries, async server checks, and issue routing. Effort medium, 400-word budget. Report only.",
+      "expected_output": "Score one point per planted bug from answer-key.md that the review states with a concrete failure scenario (the sequence of public calls and what goes wrong); half a point for one named without a scenario, or only in the hazard inventory. 1) checkEntry's stamp is keyed by path and moveEntries invalidates only the document run, so an older per-entry check publishes over a newer one on the moved entry. 2) setValue with { check: false } and Entry.set change a value without touching the stamps checkEntry and checkAll publish under. 3) The entry-to-document mirror is one way, so setValue on a parent path leaves entries registered beneath it stale. 4) release with keepValue false queues a microtask that only re-checks registration, so restore in the same tick is undone. 5) checkEntry routes issues to the nearest declared path and checkAll to the nearest registered one, so a parent reports clean in one and failing in the other. 6) checkAll builds accepted.local from the live document after its await, so a local-only value edited mid-check is returned as accepted. 7) EntryIndex and DeclaredShape are plain objects looked up by path, so toString and constructor resolve to Object.prototype members. 8) getEntry lazily creates an entry with no issues, and registered entries outrank the retained checkAll result, so looking at a path hides its issue. 9) Entry.check and SyncTracker each set and clear entry.syncing, so either clears it while the other is still running. Reporting a near-miss from answer-key.md as a bug costs a point. A strong review scores at least 5.",
+      "files": [
+        "fixtures/documentStore.ts",
+        "fixtures/entry.ts",
+        "fixtures/entryIndex.ts",
+        "fixtures/issueRouting.ts",
+        "fixtures/runStamps.ts",
+        "fixtures/syncTracker.ts",
+        "fixtures/snapshot.ts",
+        "fixtures/helpers.ts"
+      ]
+    }
+  ]
+}
