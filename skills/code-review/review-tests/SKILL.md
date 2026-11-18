@@ -63,7 +63,7 @@ Return two sections:
 
 **Hard findings.** A changed test can pass while its claimed behaviour is wrong, can fail without a behaviour change, or asserts a contract contradicted by the source of truth. For each: `file:line`, the claim, the concrete false-pass/false-fail scenario, and the fix. Order by severity.
 
-**Judgement calls.** Missing high-value cases, implementation coupling, excessive mocking, wrong test level, duplicate cross-layer coverage, unclear structure, or needless maintenance cost. For each: `file:line`, the named rule, why it hurts here, and the specific improvement. Group repeated instances.
+**Judgement calls.** Missing high-value cases, implementation coupling, excessive mocking, wrong test level, duplicate coverage within or across layers, tests that fail the reference's keep test (guarding removed code, or asserting what nothing could break), test-only production hooks, unclear structure, or needless maintenance cost. For each: `file:line`, the named rule, why it hurts here, and the specific improvement. Group repeated instances.
 
 Show each fix as a fenced `diff` block: the current lines prefixed `-`, the replacement prefixed `+`, and at most three unchanged lines of context around them. Copy the `-` lines from the file rather than retyping them, and keep the block to the lines the fix touches, never a whole hunk. When there is no single local edit to show, such as a fix spread across files, show the current lines the finding points at as a plain code block instead. For a finding reported once with a list of locations, show the snippet for the first location only.
 

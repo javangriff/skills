@@ -21,6 +21,13 @@
       "prompt": "Review save-form.test.ts against save-form.ts. Report only.",
       "expected_output": "Flags the `getByTestId('name-input')` and `getByTestId('save-button')` queries and recommends `getByRole('textbox', { name: 'Name' })` (or `getByLabelText('Name')`) and `getByRole('button', { name: 'Save' })`, because the input has a label and the button has an accessible name. Flags the `form button` CSS selector the same way. Does not demand a role query for the decorative spinner, where the test ID is an acceptable fallback, though it may suggest giving the spinner an accessible role and name such as `role=\"status\"`.",
       "files": ["fixtures/save-form.ts", "fixtures/save-form.test.ts"]
+    },
+    {
+      "id": 3,
+      "name": "tests-that-fail-the-keep-test",
+      "prompt": "Review session.test.ts against session.ts. Which of these tests are worth keeping? Report only.",
+      "expected_output": "Reports the removed-helper test ('getLegacySession' in sessionModule) as guarding code that no longer exists, recommending deletion or a lint/restricted-import rule if the removal must hold. Reports the typeof userId test as asserting what the type system already guarantees. Reports 'returns the fetched session' and 'resolves to the session from fetchSession' as duplicates that fail for the same defects, recommending keeping one. Reports the _size() assertion as coupling to the implementation, recommends relying on the existing 'fetches once' test or asserting cache behaviour through get(), and flags _size() as a test-only production hook to remove as a separate production change. Does not flag the toHaveBeenCalledTimes(1) assertion, because avoiding a second fetch is the caching contract, and does not flag the different-tokens test. Does not edit files.",
+      "files": ["fixtures/session.ts", "fixtures/session.test.ts"]
     }
   ]
 }

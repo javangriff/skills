@@ -1,6 +1,6 @@
 ---
 name: improve-tests
-description: Audit and improve existing automated tests so they detect meaningful behaviour changes without becoming brittle, flaky, or unnecessarily expensive. Use after writing or changing unit, integration, contract, component, or end-to-end tests; for requests such as "improve these tests", "strengthen the test suite", "reduce brittle mocks", "clean up flaky tests", "make these tests high quality", or "split these tests at the right level". Apply changes and run affected tests; use review-tests instead for report-only code review.
+description: Audit and improve existing automated tests so they detect meaningful behaviour changes without becoming brittle, flaky, or unnecessarily expensive. Use after writing or changing unit, integration, contract, component, or end-to-end tests; for requests such as "improve these tests", "strengthen the test suite", "reduce brittle mocks", "clean up flaky tests", "make these tests high quality", "prune tests that guard nothing", "delete pointless tests", or "split these tests at the right level". Apply changes and run affected tests; use review-tests instead for report-only code review.
 ---
 
 # Improve tests
@@ -21,6 +21,8 @@ git ls-files --others --exclude-standard
 ```
 
 Read the related production change and requirements so the tests can be judged against behaviour. Do not sweep unrelated pre-existing tests.
+
+When the user names a path and asks to prune or clean up an existing suite, that path is the scope even though it is outside the diff. Pruning a whole suite only happens when it is asked for, never as a side effect of improving a change.
 
 ## Step 1: learn and baseline
 
@@ -48,7 +50,11 @@ Apply the smallest coherent changes in this order:
 3. Replace implementation-detail assertions and internal mocks with observable results, state, or a more stable seam.
 4. Remove nondeterminism, shared-state leakage, sleeps, and unreliable cleanup.
 5. Clarify names, setup, helpers, assertions, and file boundaries where doing so improves diagnosis or maintenance.
-6. Remove duplicate or no-value tests only after proving the same risk remains covered.
+6. Prune tests that fail the reference's keep test: a test belongs only if it changes when the intended behaviour changes and fails when that behaviour regresses.
+   - Delete a test that guards the past (asserts removed code is absent) or nothing (re-checks the type system, tests the framework, or asserts what a mock of the unit returns).
+   - Rewrite, rather than delete, a test coupled to the implementation when the behaviour it was reaching for is not covered elsewhere.
+   - Delete a duplicate only after confirming the surviving test asserts everything the copy did.
+   - When a deleted or rewritten test was the only caller of a production hook (a reset helper, a state getter, an `_internal` accessor), leave the hook in place and report it as removable production code.
 
 Edit tests, test fixtures, test helpers, snapshots, and test configuration only. If a stable test requires a production seam that does not exist, report the design constraint instead of changing production code.
 
@@ -67,7 +73,7 @@ List:
 1. improvements as `file:line`, the risk addressed, and why confidence is stronger;
 2. findings not applied and why;
 3. every test/lint/typecheck command run and its result;
-4. any production defect or design constraint exposed.
+4. any production defect or design constraint exposed, including production hooks left with no caller after pruning.
 
 No preamble.
 

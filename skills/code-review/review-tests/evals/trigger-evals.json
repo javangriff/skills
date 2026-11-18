@@ -5,6 +5,7 @@
   {"query": "Check whether the unit, integration, and e2e tests in this diff are split at the right level.", "should_trigger": true},
   {"query": "Do these tests cover the important boundaries and failure paths? Report only.", "should_trigger": true},
   {"query": "Our browser tests pass, but I don't trust them. Review their quality without changing anything.", "should_trigger": true},
+  {"query": "Which tests in this PR are pointless and could be deleted? Don't change anything yet.", "should_trigger": true},
   {"query": "Improve these tests and run them when you're done.", "should_trigger": false},
   {"query": "Build this feature test-first using red-green-refactor.", "should_trigger": false},
   {"query": "This test fails intermittently in CI; diagnose why.", "should_trigger": false},

@@ -7,6 +7,13 @@
       "prompt": "Improve basket.test.ts so the tests are trustworthy. Do not change basket.ts.",
       "expected_output": "Removes the shared mutable basket and creates controlled state for each test, so the total test no longer depends on the add test running first. Keeps both behaviours as separate tests with specific assertions. Does not add sleeps, mocks, a new dependency, or production changes. Runs the narrow test command if the fixture environment exposes one; otherwise reports that verification could not be run rather than inventing a successful command.",
       "files": ["fixtures/basket.ts", "fixtures/basket.test.ts"]
+    },
+    {
+      "id": 1,
+      "name": "prune-without-touching-production",
+      "prompt": "Prune the tests in flags.test.ts that aren't pulling their weight. Do not change flags.ts.",
+      "expected_output": "Deletes the removed-helper test ('isBetaBannerEnabled' in flagsModule) and the typeof boolean test. Keeps exactly one of 'treats an unknown flag as disabled' and 'defaults a missing flag to false', since both fail for the same defects. Rewrites 'stores the loaded flags' against observable behaviour, such as asserting loadFlags is called once across repeated isEnabled calls, instead of deleting it outright, because loading once is behaviour no other test covers. Keeps 'returns true for an enabled flag'. Leaves flags.ts unchanged and reports _loadedFlags() as a production hook with no remaining caller that the author can remove. Runs the narrow test command if the fixture environment exposes one; otherwise reports that verification could not be run rather than inventing a successful command.",
+      "files": ["fixtures/flags.ts", "fixtures/flags.test.ts"]
     }
   ]
 }

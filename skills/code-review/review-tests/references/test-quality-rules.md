@@ -2,6 +2,14 @@
 
 A test earns its cost when it detects a meaningful behaviour change, survives an internal refactor, and gives a trustworthy, diagnostic result. Apply these rules with the repository's documented conventions and the risk of the change.
 
+**The keep test.** A test belongs in the suite only if it changes when the intended behaviour changes and fails when that behaviour regresses. A test that fails the keep test depends on one of three things instead:
+
+- **The past.** It guards code that no longer exists, so nothing will change it again.
+- **Nothing.** No change to the code under test can make it fail.
+- **The implementation.** It breaks when the code is restructured, even though behaviour did not change.
+
+Such a test is a candidate to delete, or to rewrite against the behaviour it was reaching for. The rules below say how to recognise each case.
+
 ## Contents
 
 - [Behaviour and seams](#behaviour-and-seams)
@@ -22,11 +30,16 @@ A test earns its cost when it detects a meaningful behaviour change, survives an
 - **Use the right observation point.** Querying a database is a side channel when testing a service API, but it is a legitimate observation when the persistence adapter itself is the unit.
 - **Query the UI the way a user finds it.** In UI and end-to-end tests, locate elements by accessible role and name (`getByRole('button', { name: 'Save' })`), then by label, placeholder, or visible text. Fall back to a test ID only when no accessible query can identify the element, such as a purely decorative container, and do not reach for CSS classes or DOM structure. A test ID passes when the button has lost its role or accessible name; a role query fails, and it also survives markup refactors that a test ID would not. When a test ID is used, the fix is often to give the element an accessible name, not to keep the ID.
 - **Apply the refactor test.** If renaming, extracting, inlining, or replacing an internal collaborator breaks the test without changing behaviour, the test is coupled to structure.
+- **Flag test-only production hooks.** An export or method that only tests call, such as a reset helper, a size or state getter, or an `_internal` accessor, shows that the test sees through the seam. Rewrite the test against observable behaviour, then report the hook as removable production code. Removing it is a production change, so it belongs to the author, not to a test pass. A reset hook that only restores isolation between tests is a weaker smell than a getter that tests assert on; the stronger fix for it is usually a factory or injected state so each test builds its own instance.
 
 ## Assertions and oracles
 
 - **Use an independent oracle.** Derive the expected result from a specification, worked example, invariant, fixture, or independently known value. Do not recompute it with the algorithm under test.
 - **Make the assertion discriminating.** A render-without-crashing check, `isDefined`, broad truthiness, or an unchanged mock response often passes when the important behaviour is broken. Assert the consequence that matters.
+- **Don't assert what something else already guarantees.** A test that no change to the code under test can make fail buys nothing. Two common forms:
+  - Re-checking the type system, such as `expect(typeof result.id).toBe('string')` on a typed return value. The compiler already enforces it, and a wrong value of the right type still passes.
+  - Testing the platform or framework instead of the code: that a `<button>` renders, that a click event fires, that `Array.prototype.map` maps, or that the mocked unit under test returns what the mock was told to return.
+- **Don't guard removed code.** A test that asserts a deleted feature, file, export, or path is absent cannot catch a regression, because nothing will change it again. Delete it. If the removal must stay removed, enforce it with a lint rule, a restricted import, or the type checker, not a test.
 - **Keep one logical outcome per test.** Several assertions are appropriate when together they specify one outcome or invariant. Split when failures represent independent behaviours or need different setup.
 - **Avoid assertion roulette.** A failure should identify which expectation failed and show useful actual and expected values.
 - **Treat snapshots as assertions, not recordings.** Keep them focused, stable, reviewed, and small enough that a meaningful change is visible. An accepted wall of output is weak evidence.
@@ -40,6 +53,7 @@ A test earns its cost when it detects a meaningful behaviour change, survives an
 - Add a regression test for a discovered defect at the lowest faithful level. It should fail for the defect and pass for the correction.
 - Prefer property or invariant tests when many examples express the same general rule. Keep generated failures reproducible and the property independently stated.
 - Avoid exhaustive permutations with no distinct risk. Add a case because it can fail differently, not because another value exists.
+- Keep one test per behaviour at a given level. Two tests that would fail for exactly the same defects, whether in one file or in neighbouring files, are one test with two maintenance costs. Keep the clearer one, and check that the survivor's assertions cover everything the copy asserted.
 
 ## Choosing a test level
 
@@ -89,4 +103,4 @@ Use the smallest scope that can faithfully observe the risk. Test size (runtime/
 
 ## Sources
 
-These rules synthesize Matt Pocock's [Good and Bad Tests](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/tests.md), Google's chapters on [unit testing](https://abseil.io/resources/swe-book/html/ch12.html), [test doubles](https://abseil.io/resources/swe-book/html/ch13.html), and [larger tests](https://abseil.io/resources/swe-book/html/ch14.html), Kent Beck's [Test Desiderata](https://testdesiderata.com/), the [Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), and the ISTQB discussion of [equivalence partitioning and boundary-value analysis](https://istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf).
+These rules synthesize Matt Pocock's [Good and Bad Tests](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/tests.md), Google's chapters on [unit testing](https://abseil.io/resources/swe-book/html/ch12.html), [test doubles](https://abseil.io/resources/swe-book/html/ch13.html), and [larger tests](https://abseil.io/resources/swe-book/html/ch14.html), Kent Beck's [Test Desiderata](https://testdesiderata.com/), the [Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html), the ISTQB discussion of [equivalence partitioning and boundary-value analysis](https://istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf), and the keep test from caldoai's [prune-tests](https://github.com/caldoai/skills/blob/main/skills/prune-tests/SKILL.md).
